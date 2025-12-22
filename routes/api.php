@@ -3,19 +3,22 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AuthController;
 
-// Ruta de TEST para verificar que la API responde
-Route::get('/ping', function () {
-    return response()->json(['status' => 'ok']);
-});
+ // Rutas Publicas de Autenticación
+  Route::post('auth/login', [AuthController::class, 'login']);
 
-// Rutas de Activos (Assets)
-// GET  /api/assets?property_id=1  -> Listar equipos de un hotel
-// POST /api/assets                -> Crear un equipo nuevo
-Route::get('/assets', [AssetController::class, 'index']);
-Route::post('/assets', [AssetController::class, 'store']);
+  // Rutas Protegidas de Autenticación
+  Route::group(['middleware' => ['auth:api']], function () {
 
-// (Opcional) Ruta para obtener el usuario logueado, útil más adelante
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+    //Auth
+      Route::post('auth/logout', [AuthController::class, 'logout']);
+      Route::post('auth/refresh', [AuthController::class, 'refresh']);
+      Route::get('auth/me', [AuthController::class, 'me']);
+
+    // Rutas de Activos (Assets)
+      Route::middleware('auth:api')->group(function () {
+        //CREA TODAS LAS RUTAS (GET, POST, PUT, DELETE)
+        Route::apiResource('assets', AssetController::class);
+        });
+  });

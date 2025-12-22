@@ -60,4 +60,34 @@ class AssetService
                     ->orderBy('created_at', 'desc')
                     ->get();
     }
+
+    /**
+     * Obtiene un activo por su ID
+     */
+    public function getAssetById($id)
+    {
+        return Asset::findOrFail($id);
+    }
+    
+    public function updateAsset($id, array $data)
+    {
+        $asset = Asset::findOrFail($id);
+        
+        // Separamos 'specs' si vienen en el update
+        if (isset($data['specs'])) {
+            // Fusionamos las specs nuevas con las viejas para no borrar datos previos
+            $currentSpecs = $asset->specs ?? [];
+            $data['specs'] = array_merge($currentSpecs, $data['specs']);
+        }
+
+        $asset->update($data);
+        return $asset;
+    }
+
+    public function deleteAsset($id)
+    {
+        $asset = Asset::findOrFail($id);
+        $asset->delete();
+    }
+
 }

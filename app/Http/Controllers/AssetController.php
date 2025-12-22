@@ -18,6 +18,7 @@ class AssetController extends Controller
         $this->assetService = $assetService;
     }
 
+    // Listar Activos con filtro por propiedad
     public function index(Request $request)
     {
         // Filtro obligatorio por propiedad (Multitenancy)
@@ -33,12 +34,48 @@ class AssetController extends Controller
         return AssetResource::collection($assets);
     }
 
+    // Crear un nuevo Activo
     public function store(StoreAssetRequest $request)
     {
         // El Request ya validó los datos antes de entrar aquí.
-        // Llamamos al servicio con todos los datos (el servicio sabrá qué hacer)
         $newAsset = $this->assetService->createAsset($request->all());
 
         return new AssetResource($newAsset);
+    }
+
+    //Ver detalle de un activo
+    public function show($id)
+    {
+        $asset = $this->assetService->getAssetById($id);
+
+        if (!$asset) {
+            return response()->json(['error' => 'Activo no encontrado'], 404);
+        }
+
+        return new AssetResource($asset);
+    }
+
+    //Actualizar un activo existente
+    public function update(Request $request, $id)
+    {
+        $updatedAsset = $this->assetService->updateAsset($id, $request->all());
+
+        if (!$updatedAsset) {
+            return response()->json(['error' => 'Activo no encontrado o no se pudo actualizar'], 404);
+        }
+
+        return new AssetResource($updatedAsset);
+    }
+
+    //Eliminar un activo
+    public function destroy($id)
+    {
+        $deleted = $this->assetService->deleteAsset($id);
+
+        if (!$deleted) {
+            return response()->json(['error' => 'Activo no encontrado o no se pudo eliminar'], 404);
+        }
+
+        return response()->json(['message' => 'Activo eliminado exitosamente']);
     }
 }

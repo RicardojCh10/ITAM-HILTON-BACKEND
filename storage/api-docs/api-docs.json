@@ -1,0 +1,295 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "ITAM Hilton API",
+        "description": "Documentación de la API para gestión de activos de TI",
+        "contact": {
+            "email": "admin@hilton.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/api",
+            "description": "Servidor API Principal"
+        }
+    ],
+    "paths": {
+        "/assets": {
+            "get": {
+                "tags": [
+                    "Activos"
+                ],
+                "summary": "Obtener lista de activos",
+                "description": "Devuelve todos los equipos asignados a una propiedad (Hotel).",
+                "operationId": "839a40ad0082bc4601e4e5b4d7e8d3d7",
+                "parameters": [
+                    {
+                        "name": "property_id",
+                        "in": "query",
+                        "description": "ID de la propiedad (Hotel) a consultar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista obtenida correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "category": {
+                                                        "type": "string",
+                                                        "example": "laptop"
+                                                    },
+                                                    "brand": {
+                                                        "type": "string",
+                                                        "example": "Dell"
+                                                    },
+                                                    "serial_number": {
+                                                        "type": "string",
+                                                        "example": "ABC-123"
+                                                    },
+                                                    "owner_name": {
+                                                        "type": "string",
+                                                        "example": "Juan Perez"
+                                                    },
+                                                    "details": {
+                                                        "type": "object",
+                                                        "example": {
+                                                            "ram": "16GB",
+                                                            "processor": "Intel i7"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Falta el parámetro property_id"
+                    },
+                    "401": {
+                        "description": "No autorizado (Token inválido o expirado)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Activos"
+                ],
+                "summary": "Registrar nuevo activo",
+                "description": "Guarda un nuevo equipo. Los campos técnicos específicos (como RAM, Disco, IMEI) ponlos al mismo nivel; el sistema los detectará y los guardará en el JSON automáticamente.",
+                "operationId": "ef1f9ce040e398e44a16cc8feaba324f",
+                "requestBody": {
+                    "description": "Datos del equipo a registrar",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "property_id",
+                                    "category",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "property_id": {
+                                        "description": "ID del Hotel (1=Hilton, 2=Waldorf, etc.)",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "category": {
+                                        "description": "Tipo de equipo (Elige uno de la lista)",
+                                        "type": "string",
+                                        "enum": [
+                                            "laptop",
+                                            "tablet",
+                                            "printer",
+                                            "switch",
+                                            "mobile"
+                                        ],
+                                        "example": "laptop"
+                                    },
+                                    "brand": {
+                                        "description": "Marca del fabricante",
+                                        "type": "string",
+                                        "example": "Dell"
+                                    },
+                                    "model": {
+                                        "description": "Modelo comercial",
+                                        "type": "string",
+                                        "example": "Latitude 5420"
+                                    },
+                                    "serial_number": {
+                                        "description": "Número de serie único",
+                                        "type": "string",
+                                        "example": "GT-5599-X"
+                                    },
+                                    "status": {
+                                        "description": "Estado actual del equipo",
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "repair",
+                                            "retired",
+                                            "lost"
+                                        ],
+                                        "example": "active"
+                                    },
+                                    "purchase_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-20"
+                                    },
+                                    "ram": {
+                                        "description": "(Opcional) Se guardará en specs automáticamente",
+                                        "type": "string",
+                                        "example": "16GB"
+                                    },
+                                    "processor": {
+                                        "description": "(Opcional) Se guardará en specs automáticamente",
+                                        "type": "string",
+                                        "example": "Intel i7 11th Gen"
+                                    },
+                                    "imei": {
+                                        "description": "(Solo para celulares) Se guardará en specs",
+                                        "type": "string",
+                                        "example": "3544120200012"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Activo creado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Error de validación (Faltan campos)"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Iniciar sesión",
+                "operationId": "8cb7742ae98d0990acb2907c4e00bf24",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@hilton.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "superuser-itam"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login Exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "bearer"
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciales Incorrectas"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Ingrese su token JWT aquí",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Activos",
+            "description": "Activos"
+        },
+        {
+            "name": "Autenticación",
+            "description": "Autenticación"
+        }
+    ]
+}
