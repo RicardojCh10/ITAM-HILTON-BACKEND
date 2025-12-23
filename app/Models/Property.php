@@ -10,6 +10,7 @@ class Property extends Model
     //
     use HasFactory;
 
+    const UPDATED_AT = null; // Deshabilitar la gestión automática de updated_at
     //Campos que se pueden asignar 
     protected $fillable = [
         'name',

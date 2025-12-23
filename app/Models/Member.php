@@ -9,6 +9,8 @@ class Member extends Model
 {
     use HasFactory;
 
+    const UPDATED_AT = null;
+
     //Campos que se pueden asignar masivamente
     protected $fillable = [
         'property_id',

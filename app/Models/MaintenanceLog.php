@@ -10,6 +10,8 @@ class MaintenanceLog extends Model
     //
     use HasFactory;
 
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'asset_id',
         'reported_by', //ID del miembro que reportó el mantenimiento
@@ -28,5 +30,10 @@ class MaintenanceLog extends Model
     public function asset()
     {
         return $this->belongsTo(Asset::class);
+    }
+
+    public function reporter()
+    {
+        return $this->belongsTo(User::class, 'reported_by');
     }
 }

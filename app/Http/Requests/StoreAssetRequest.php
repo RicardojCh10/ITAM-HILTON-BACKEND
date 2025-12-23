@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAssetRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true; // Permitimos acceso (luego puedes restringir por rol)
     }
@@ -14,27 +14,33 @@ class StoreAssetRequest extends FormRequest
     public function rules() : array
     {
         return [
-            // Validaciones Estándar
-            'property_id'   => 'required|exists:properties,id',
-            'category'      => 'required|string', // laptop, mobile, switch, etc.
-            
-            // Validaciones flexibles según tu SQL
-            'serial_number' => 'nullable|string|unique:assets,serial_number', 
+           // VINCULACIÓN (Vital)
+            'property_id' => 'required|integer|exists:properties,id',
+            'member_id'   => 'nullable|integer|exists:members,id', // Puede ser null (Stock)
 
-            'hilton_name'   => 'nullable|string',
-            'mac_address'   => 'nullable|mac_address',
-            'ip_address' => 'nullable|ipv4',
-            'status'        => 'required|string', // active, repair, etc.
-            'brand'         => 'nullable|string',
-            'model'         => 'nullable|string',
+            // DATOS BÁSICOS
+            'category'      => 'required|string|max:50',
+            'brand'         => 'nullable|string|max:50',
+            'model'         => 'nullable|string|max:100',
+            'serial_number' => 'nullable|string|max:100|unique:assets,serial_number',
+            'hilton_name'   => 'nullable|string|max:100',
+
+            // RED
+            'mac_address' => 'nullable|mac_address', // Valida formato MAC real
+            'ip_address'  => 'nullable|ipv4',        // Valida IP real
+
+            // ESTADO
+            'status' => 'required|string|in:active,repair,lost,retired,stored',
             
-            // Fechas
+            // FECHAS
             'purchase_date'   => 'nullable|date',
-            'warranty_expiry' => 'nullable|date',
-            
-            // Datos JSON dinámicos
+            'warranty_expiry' => 'nullable|date|after_or_equal:purchase_date',
+
+            // SPECS (JSON)
             'specs' => 'nullable|array',
-            
+            'specs.ram' => 'nullable|string',
+            'specs.storage' => 'nullable|string',
+            'specs.processor' => 'nullable|string',
         ];
     }
 }

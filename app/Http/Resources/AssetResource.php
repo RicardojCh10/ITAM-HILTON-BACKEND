@@ -9,19 +9,47 @@ class AssetResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        // 1. Obtenemos el array base del modelo
-        $baseData = parent::toArray($request);
+        return [
+            'id' => $this->id,
+            
+            // TRANSFORMACIÓN DE RELACIONES
+            // Mostramos datos útiles, no solo IDs sueltos
+            'location' => [
+                'property_id' => $this->property_id,
+                'property_name' => $this->property->name ?? 'Desconocido', // Carga el nombre del hotel
+            ],
 
-        // 2. Extraemos el nombre del dueño (si existe) para mostrarlo fácil en la tabla
-        $ownerName = $this->member ? $this->member->name : 'Sin Asignar (Bodega)';
+            'assigned_to' => $this->member ? [
+                'member_id' => $this->member->id,
+                'name' => $this->member->name,
+                'email' => $this->member->email,
+                'department' => $this->member->department,
+            ] : null, // Si es null, significa que está en stock
+            
+            // DATOS DEL EQUIPO
+            'info' => [
+                'category' => $this->category,
+                'brand' => $this->brand,
+                'model' => $this->model,
+                'serial_number' => $this->serial_number,
+                'hilton_name' => $this->hilton_name,
+            ],
 
-        // 3. Mezclamos todo: Datos base + Nombre Dueño + Contenido del JSON specs
-        // De esta forma, en Vue podrás acceder a 'item.ram' directamente
-        return array_merge($baseData, [
-            'owner_name' => $ownerName,
-            // Al hacer esto, los campos dentro de specs (ej: imei) quedan al mismo nivel
-            // Si prefieres mantenerlos separados, usa: 'details' => $this->specs
-            'details' => $this->specs, 
-        ]);
+            'network' => [
+                'mac_address' => $this->mac_address,
+                'ip_address' => $this->ip_address,
+            ],
+
+            'status' => $this->status,
+            
+            'dates' => [
+                'purchase' => $this->purchase_date ? $this->purchase_date->format('Y-m-d') : null,
+                'warranty' => $this->warranty_expiry ? $this->warranty_expiry->format('Y-m-d') : null,
+            ],
+
+            'specs' => $this->specs, // Tu JSONB dinámico
+
+            'created_at' => $this->created_at->toIso8601String(),
+        ];
     }
 }

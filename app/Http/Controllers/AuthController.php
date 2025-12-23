@@ -10,6 +10,10 @@ use App\Http\Requests\Auth\LoginRequest;
 class AuthController extends Controller
 {
    //Login: Recibe emnail y password, devuelve token JWT
+
+    /**
+     * Iniciar Sesión (Login)
+     */
     public function login(LoginRequest $request)
     {
         $credentials = request(['email', 'password']);
