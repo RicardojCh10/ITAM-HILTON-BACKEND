@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,9 @@ class AppServiceProvider extends ServiceProvider
             SecurityScheme::http('bearer', 'JWT')
         );
     });
+
+    Scramble::gate(function (User $user = null) {
+            return true; 
+        });
     }
 }
