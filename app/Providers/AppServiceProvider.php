@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Illuminate\Support\Facades\Gate;
 use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
         );
     });
 
-    Scramble::gate(function (User $user = null) {
-            return true; 
+    Gate::define('viewScramble', function ($user = null) {
+            return true;
         });
     }
 }
