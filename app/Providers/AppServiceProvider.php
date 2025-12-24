@@ -26,8 +26,6 @@ class AppServiceProvider extends ServiceProvider
         );
     });
 
-    Gate::define('viewScramble', function ($user = null) {
-            return true;
-        });
+    Gate::define('viewScramble', fn () => true);
     }
 }
