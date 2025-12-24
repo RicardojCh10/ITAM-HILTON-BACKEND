@@ -24,7 +24,8 @@ class MaintenanceLogController extends Controller
     public function index(Request $request)
     {
         $assetId = $request->query('asset_id');
-        $logs = $this->maintenanceLogService->getLogs($assetId);
+        $perPage = $request->query('per_page', 15);
+        $logs = $this->maintenanceLogService->getLogs($assetId, $perPage);
 
         return MaintenanceLogResource::collection($logs);
     }

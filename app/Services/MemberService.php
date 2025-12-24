@@ -6,9 +6,11 @@ use App\Models\Member;
 
 class MemberService
 {
-    public function getMembersByProperty($propertyId)
+    public function getMembersByProperty($propertyId, $perPage = 15)
     {
-        return Member::where('property_id', $propertyId)->get();
+        return Member::where('property_id', $propertyId)
+        ->orderBy('name', 'asc')
+        ->paginate($perPage);
     }
 
     public function createMember(array $data)

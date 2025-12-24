@@ -9,7 +9,7 @@ class MaintenanceLogService
     /**
      * Obtener logs. Opcional: filtrar por activo.
      */
-    public function getLogs($assetId = null)
+    public function getLogs($assetId = null, $perPage = 15)
     {
         $query = MaintenanceLog::query();
 
@@ -18,7 +18,7 @@ class MaintenanceLogService
         }
 
         // Ordenamos por fecha del evento (el más reciente primero)
-        return $query->orderBy('event_date', 'desc')->get();
+        return $query->orderBy('event_date', 'desc')->paginate($perPage);
     }
 
     public function createLog(array $data)
