@@ -12,11 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // CONFÍAR EN RAILWAY (Arregla Mixed Content)
-        $middleware->trustProxies(at: '*');
-        
-        // Opcional: Para evitar problemas con headers
-        $middleware->trustHosts(at: ['*']);
+        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
