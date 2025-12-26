@@ -24,8 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // 1. FORZAR HTTPS (Arregla el error "Mixed Content")
-        // Si estamos en producción (Railway), obligamos a usar https
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
@@ -37,8 +35,7 @@ class AppServiceProvider extends ServiceProvider
             );
         });
 
-        // 3. PERMISO DE ACCESO (Arregla el error 403)
-        // Definimos 'viewScramble' para que SIEMPRE diga que sí (true).
+        // 3. PERMISO DE ACCESO
         Gate::define('viewScramble', function ($user = null) {
             return true;
         });
