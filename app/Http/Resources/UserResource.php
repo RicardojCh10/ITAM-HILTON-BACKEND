@@ -16,7 +16,12 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'property_id' => $this->property_id,
-            // 'property' => new PropertyResource($this->whenLoaded('property')),
+            'property' => $this->whenLoaded('property', function () {
+                return [
+                    'id' => $this->property->id,
+                    'name' => $this->property->name, 
+                ];
+            }),
         ];
     }
 }

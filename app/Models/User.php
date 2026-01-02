@@ -38,6 +38,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->getKey();
     }
 
+    public function property()
+    {
+        return $this->belongsTo(Property::class, 'property_id');
+    }
+
     public function getJWTCustomClaims()
     {
         return [

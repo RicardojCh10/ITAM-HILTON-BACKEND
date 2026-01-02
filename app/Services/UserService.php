@@ -12,8 +12,7 @@ class UserService
      */
     public function getAllUsers($perPage = 15, $propertyId = null): LengthAwarePaginator
     {
-        // Iniciamos la consulta (Query Builder)
-        $query = User::orderBy('id', 'desc');
+        $query = User::with('property')->orderBy('id', 'desc');
 
         // Si nos envían un ID de propiedad, filtramos
         if ($propertyId) {
