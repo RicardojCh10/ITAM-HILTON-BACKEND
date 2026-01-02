@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PropertyController;
@@ -22,6 +23,9 @@ use App\Http\Controllers\MaintenanceLogController;
       // Rutas Protegidas de Recursos
       Route::middleware('auth:api')->group(function () {
       // Recursos API
+
+      //Rutas de Users
+      Route::apiResource('users', UserController::class);
       //Rutas de assets
       Route::apiResource('assets', AssetController::class);
       //Rutas de Property
