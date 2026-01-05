@@ -10,16 +10,24 @@ class UserService
     /**
      * Obtener usuarios paginados y opcionalmente filtrados por propiedad.
      */
-    public function getAllUsers($perPage = 15, $propertyId = null): LengthAwarePaginator
+
+    public function getAllUsers($perPage = 15, $propertyId = null, $search = null) 
     {
         $query = User::with('property')->orderBy('id', 'desc');
 
-        // Si nos envían un ID de propiedad, filtramos
+        // Filtro por Propiedad
         if ($propertyId) {
-            $query->where('property_id', $propertyId);
+        $query->where('property_id', $propertyId);
         }
 
-        // Ejecutamos la paginación
+        // LÓGICA DE BÚSQUEDA
+        if ($search) {
+                $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
         return $query->paginate($perPage);
     }
 

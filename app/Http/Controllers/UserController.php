@@ -26,10 +26,10 @@ class UserController extends Controller
    public function index(Request $request)
     {
         $perPage = $request->query('per_page', 15);
-        $propertyId = $request->query('property_id'); // <--- Capturas esto
+        $propertyId = $request->query('property_id'); 
+        $search = $request->query('search');
 
-        // Se lo pasas al servicio
-        $users = $this->userService->getAllUsers($perPage, $propertyId);
+        $users = $this->userService->getAllUsers($perPage, $propertyId, $search);
         
         return UserResource::collection($users);
     }
