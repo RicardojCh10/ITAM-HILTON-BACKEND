@@ -23,13 +23,12 @@ class MemberController extends Controller
      */
     public function index(Request $request)
     {
-        $propertyId = $request->query('property_id');
         $perPage = $request->query('per_page', 15);
-        if (!$propertyId) {
-            return response()->json(['error' => 'Property ID es requerido'], 400);
-        }
+        $propertyId = $request->query('property_id'); 
+        $search = $request->query('search');          
 
-        $members = $this->memberService->getMembersByProperty($propertyId, $perPage);
+        $members = $this->memberService->getAllMembers($perPage, $propertyId, $search);
+        
         return MemberResource::collection($members);
     }
 

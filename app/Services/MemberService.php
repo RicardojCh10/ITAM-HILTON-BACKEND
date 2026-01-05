@@ -3,14 +3,29 @@
 namespace App\Services;
 
 use App\Models\Member;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class MemberService
 {
-    public function getMembersByProperty($propertyId, $perPage = 15)
+    public function getAllMembers($perPage = 15, $propertyId = null, $search = null): LengthAwarePaginator
     {
-        return Member::where('property_id', $propertyId)
-        ->orderBy('name', 'asc')
-        ->paginate($perPage);
+        $query = Member::with('property')->orderBy('id', 'desc');
+
+        if ($propertyId) {
+            $query->where('property_id', $propertyId);
+        }
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%")
+                  ->orWhere('tm_id', 'LIKE', "%{$search}%") // ID de empleado
+                  ->orWhere('onq_id', 'LIKE', "%{$search}%");
+            });
+        }
+
+        return $query->paginate($perPage);
     }
 
     public function createMember(array $data)
