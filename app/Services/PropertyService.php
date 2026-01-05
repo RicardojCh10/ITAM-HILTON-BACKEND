@@ -6,9 +6,19 @@ use App\Models\Property;
 
 class PropertyService
 {
-    public function getAllProperties()
+
+    public function getAllProperties($perPage = 15, $search = null): LengthAwarePaginator
     {
-        return Property::all();
+        $query = Property::query()->orderBy('id', 'desc');
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('code', 'LIKE', "%{$search}%"); 
+            });
+        }
+
+        return $query->paginate($perPage);
     }
 
     public function CreateProperty(array $data)

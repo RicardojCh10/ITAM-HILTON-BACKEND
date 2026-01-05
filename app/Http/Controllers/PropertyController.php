@@ -21,9 +21,13 @@ class PropertyController extends Controller
     /**
      * Listar Propiedades
      */
-    public function index()
+    public function index(Request $request) 
     {
-        $properties = $this->propertyService->getAllProperties();
+        $perPage = $request->query('per_page', 15);
+        $search = $request->query('search');
+
+        $properties = $this->propertyService->getAllProperties($perPage, $search);
+        
         return PropertyResource::collection($properties);
     }
 
