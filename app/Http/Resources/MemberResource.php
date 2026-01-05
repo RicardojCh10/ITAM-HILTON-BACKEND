@@ -12,17 +12,28 @@ class MemberResource extends JsonResource
         return [
             'id' => $this->id,
             'property_id' => $this->property_id,
+            
+            'property' => $this->whenLoaded('property', function () {
+                return [
+                    'id' => $this->property->id,
+                    'name' => $this->property->name,
+                    'code' => $this->property->code,
+                ];
+            }),
+
             'tm_id' => $this->tm_id,
             'name' => $this->name,
             'email' => $this->email,
+            
             'corporate_info' => [
                 'position' => $this->position,
                 'department' => $this->department,
                 'onq_id' => $this->onq_id,
             ],
+            
             'status' => $this->status,
             'details' => $this->details, // Devuelve el JSON completo
-            'created_at' => $this->created_at->toIso8601String(),
+            'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }
 }
