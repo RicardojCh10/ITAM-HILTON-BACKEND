@@ -12,8 +12,18 @@ class MemberService
     {
         $query = Member::with('property')->orderBy('id', 'desc');
 
+        // Filtros opcionales
+
         if ($propertyId) {
             $query->where('property_id', $propertyId);
+        }
+
+        if ($department) {
+            $query->where('department', 'LIKE', "%{$department}%");
+        }
+
+        if ($status) {
+            $query->where('status', $status); 
         }
 
         if ($search) {

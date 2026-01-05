@@ -25,9 +25,11 @@ class MemberController extends Controller
     {
         $perPage = $request->query('per_page', 15);
         $propertyId = $request->query('property_id'); 
-        $search = $request->query('search');          
+        $search = $request->query('search');    
+        $department = $request->query('department');
+        $status = $request->query('status');
 
-        $members = $this->memberService->getAllMembers($perPage, $propertyId, $search);
+        $members = $this->memberService->getAllMembers($perPage, $propertyId, $search, $department, $status);
         
         return MemberResource::collection($members);
     }
