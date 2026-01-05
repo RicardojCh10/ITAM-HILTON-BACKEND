@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Property;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PropertyService
 {
