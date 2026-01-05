@@ -8,12 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class MemberService
 {
-    public function getAllMembers($perPage = 15, $propertyId = null, $search = null): LengthAwarePaginator
+    public function getAllMembers($perPage = 15, $propertyId = null, $search = null, $department = null, $status = null): LengthAwarePaginator
     {
         $query = Member::with('property')->orderBy('id', 'desc');
 
         // Filtros opcionales
-
         if ($propertyId) {
             $query->where('property_id', $propertyId);
         }
@@ -30,7 +29,7 @@ class MemberService
             $query->where(function($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
                   ->orWhere('email', 'LIKE', "%{$search}%")
-                  ->orWhere('tm_id', 'LIKE', "%{$search}%") // ID de empleado
+                  ->orWhere('tm_id', 'LIKE', "%{$search}%")
                   ->orWhere('onq_id', 'LIKE', "%{$search}%");
             });
         }
