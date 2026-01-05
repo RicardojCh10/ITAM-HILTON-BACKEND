@@ -44,7 +44,7 @@ class MemberService
 
     public function getMemberById(int $id)
     {
-        return Member::findOrFail($id);
+        return Member::with('property')->findOrFail($id);
     }
 
     public function updateMember($id, array $data)
