@@ -42,10 +42,6 @@ class AssetController extends Controller
             $memberId
         );
         
-        if (!$propertyId) {
-            return response()->json(['error' => 'Property ID es requerido'], 400);
-        }
-        
         // Retornamos la colección formateada
         return AssetResource::collection($assets);
     }
