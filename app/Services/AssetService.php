@@ -7,24 +7,28 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class AssetService
 {
-    public function getAssetsByProperty(
+    /**
+     * Obtener Activos con Filtros Avanzados
+     */
+    public function getAllAssets(
         $perPage = 15, 
         $propertyId = null, 
         $search = null, 
         $categoryId = null, 
         $status = null,
         $memberId = null
-        ): LengthAwarePaginator
+    ): LengthAwarePaginator
     {
+        // 1. Iniciar Query con Relaciones
         $query = Asset::with(['property', 'member'])->orderBy('id', 'desc');
 
-        // --- FILTROS ---
+        // 2. Filtros
         if ($propertyId) $query->where('property_id', $propertyId);
         if ($categoryId) $query->where('category', $categoryId);
         if ($status) $query->where('status', $status);
         if ($memberId) $query->where('member_id', $memberId);
 
-        // --- BÚSQUEDA AVANZADA ---
+        // 3. Búsqueda Avanzada
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('brand', 'LIKE', "%{$search}%")
@@ -42,7 +46,6 @@ class AssetService
     public function createAsset(array $data)
     {
         $asset = Asset::create($data);
-        
         return $asset->load(['property', 'member']);
     }
 
@@ -55,15 +58,13 @@ class AssetService
     {
         $asset = Asset::findOrFail($id);
         
-        // Lógica para fusionar specs sin borrar las anteriores (opcional)
+        // Fusión de Specs (JSON)
         if (isset($data['specs'])) {
             $currentSpecs = $asset->specs ?? [];
             $data['specs'] = array_merge($currentSpecs, $data['specs']);
         }
 
         $asset->update($data);
-        
-        // Se recarga el activo fresco con sus relaciones actualizadas
         return $asset->refresh()->load(['property', 'member']);
     }
 
