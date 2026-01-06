@@ -25,16 +25,26 @@ class AssetController extends Controller
      */
     public function index(Request $request)
     {
-        // Filtro obligatorio por propiedad (Multitenancy)
+        // Captura de filtros
+        $perPage = $request->query('per_page', 15);
         $propertyId = $request->query('property_id');
+        $search = $request->query('search');
+        $category = $request->query('category');
+        $status = $request->query('status');
+        $memberId = $request->query('member_id');
 
-        $perPage = $request->query('per_page', 15); // Valor por defecto 15
+       $assets = $this->assetService->getAllAssets(
+            $perPage, 
+            $propertyId, 
+            $search, 
+            $category, 
+            $status,
+            $memberId
+        );
         
         if (!$propertyId) {
             return response()->json(['error' => 'Property ID es requerido'], 400);
         }
-
-        $assets = $this->assetService->getAssetsByProperty($propertyId, $perPage);
         
         // Retornamos la colección formateada
         return AssetResource::collection($assets);
@@ -46,7 +56,6 @@ class AssetController extends Controller
      */
     public function store(StoreAssetRequest $request)
     {
-        // El Request ya validó los datos antes de entrar aquí.
         $asset = $this->assetService->createAsset($request->validated());
         return new AssetResource($asset);
     }

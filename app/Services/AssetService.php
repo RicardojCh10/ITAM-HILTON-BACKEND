@@ -3,23 +3,46 @@
 namespace App\Services;
 
 use App\Models\Asset;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AssetService
 {
-    public function getAssetsByProperty($propertyId, $perPage = 15)
+    public function getAssetsByProperty(
+        $perPage = 15, 
+        $propertyId = null, 
+        $search = null, 
+        $categoryId = null, 
+        $status = null,
+        $memberId = null
+        ): LengthAwarePaginator
     {
-        return Asset::with(['property', 'member']) // <--- CLAVE: Carga los datos relacionados de una vez
-                    ->where('property_id', $propertyId)
-                    ->orderBy('created_at', 'desc')
-                    ->paginate($perPage);
+        $query = Asset::with(['property', 'member'])->orderBy('id', 'desc');
+
+        // --- FILTROS ---
+        if ($propertyId) $query->where('property_id', $propertyId);
+        if ($categoryId) $query->where('category', $categoryId);
+        if ($status) $query->where('status', $status);
+        if ($memberId) $query->where('member_id', $memberId);
+
+        // --- BÚSQUEDA AVANZADA ---
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('brand', 'LIKE', "%{$search}%")
+                  ->orWhere('model', 'LIKE', "%{$search}%")
+                  ->orWhere('serial_number', 'LIKE', "%{$search}%")
+                  ->orWhere('hilton_name', 'LIKE', "%{$search}%")
+                  ->orWhere('mac_address', 'LIKE', "%{$search}%")
+                  ->orWhere('ip_address', 'LIKE', "%{$search}%");
+            });
+        }
+
+        return $query->paginate($perPage);
     }
 
     public function createAsset(array $data)
     {
-        // Creamos el activo
         $asset = Asset::create($data);
         
-        // Recargamos las relaciones para que el Resource pueda mostrar el nombre del miembro inmediatamente
         return $asset->load(['property', 'member']);
     }
 
@@ -40,7 +63,7 @@ class AssetService
 
         $asset->update($data);
         
-        // Retornamos el activo fresco con sus relaciones actualizadas
+        // Se recarga el activo fresco con sus relaciones actualizadas
         return $asset->refresh()->load(['property', 'member']);
     }
 
