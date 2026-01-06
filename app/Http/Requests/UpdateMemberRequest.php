@@ -27,6 +27,7 @@ class UpdateMemberRequest extends FormRequest
             'details' => 'nullable|array',
             'details.phone' => 'nullable|string',
             'details.notes' => 'nullable|string',
+            'details.hiring_date' => 'nullable|date',
         ];
     }
 }
