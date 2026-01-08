@@ -27,7 +27,13 @@ class UpdateAssetRequest extends FormRequest
             'status'      => 'sometimes|string|in:active,repair,lost,retired,stored',
             'purchase_date'   => 'nullable|date',
             'warranty_expiry' => 'nullable|date|after_or_equal:purchase_date',
+
+            // SPECS (JSON)
             'specs' => 'nullable|array',
+            'specs.ram' => 'nullable|string',
+            'specs.storage' => 'nullable|string',
+            'specs.processor' => 'nullable|string',
+            'specs.provider' => 'nullable|string|max:100',
         ];
     }
 }

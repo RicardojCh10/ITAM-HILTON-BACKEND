@@ -41,6 +41,7 @@ class StoreAssetRequest extends FormRequest
             'specs.ram' => 'nullable|string',
             'specs.storage' => 'nullable|string',
             'specs.processor' => 'nullable|string',
+            'specs.provider' => 'nullable|string|max:100',
         ];
     }
 }
