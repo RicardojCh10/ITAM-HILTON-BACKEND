@@ -9,24 +9,23 @@ class AssetResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $specs = $this->specs ?? [];
+
         return [
             'id' => $this->id,
             
-            // TRANSFORMACIÓN DE RELACIONES
-            // Mostramos datos útiles, no solo IDs sueltos
             'location' => [
                 'property_id' => $this->property_id,
-                'property_name' => $this->property->name ?? 'Desconocido', // Carga el nombre del hotel
+                'property_name' => $this->property?->name ?? 'Desconocido', 
             ],
 
             'assigned_to' => $this->member ? [
                 'member_id' => $this->member->id,
                 'name' => $this->member->name,
                 'email' => $this->member->email,
-                'department' => $this->member->department,
-            ] : null, // Si es null, significa que está en stock
+                'department' => $this->member->department ?? null,
+            ] : null,
             
-            // DATOS DEL EQUIPO
             'info' => [
                 'category' => $this->category,
                 'brand' => $this->brand,
@@ -43,11 +42,23 @@ class AssetResource extends JsonResource
             'status' => $this->status,
             
             'dates' => [
-                'purchase' => $this->purchase_date ? $this->purchase_date->format('Y-m-d') : null,
-                'warranty' => $this->warranty_expiry ? $this->warranty_expiry->format('Y-m-d') : null,
+                'purchase' => $this->purchase_date?->format('Y-m-d'),
+                'warranty' => $this->warranty_expiry?->format('Y-m-d'),
             ],
 
-            'specs' => $this->specs, // Tu JSONB dinámico
+            'specs' => [
+                'ram' => $specs['ram'] ?? null,
+                'storage' => $specs['storage'] ?? null,
+                'processor' => $specs['processor'] ?? null,
+                'provider' => $specs['provider'] ?? null,
+
+                'imei' => $specs['imei'] ?? null,
+                'sim' => $specs['sim'] ?? null,
+                'plan' => $specs['plan'] ?? null,
+                'carrier' => $specs['carrier'] ?? null,
+                'phone_number' => $specs['phone_number'] ?? null,
+                'description' => $specs['description'] ?? null,
+            ],
 
             'created_at' => $this->created_at->toIso8601String(),
         ];
