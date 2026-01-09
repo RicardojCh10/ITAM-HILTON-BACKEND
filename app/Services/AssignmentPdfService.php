@@ -13,12 +13,18 @@ class AssignmentPdfService extends Fpdf
     public function generatePdf(Asset $asset)
     {
         $this->asset = $asset;
+        
+        $specs = $this->asset->specs ?? []; 
+
         $this->AddPage();
         $this->SetAutoPageBreak(true, 10);
-        $this->SetLineWidth(0.2); // Líneas finas y elegantes
+        $this->SetLineWidth(0.2); 
 
         // --- CABECERA ---
-        $this->Image(public_path('img/hilton_logo.png'), 15, 10, 30);
+        if (file_exists(public_path('img/hilton_logo.png'))) {
+            $this->Image(public_path('img/hilton_logo.png'), 15, 10, 30);
+        }
+        
         $this->SetFont('Arial', 'B', 16);
         $this->Cell(0, 10, utf8_decode('HILTON'), 0, 1, 'C');
         $this->SetFont('Arial', 'B', 12);
@@ -31,16 +37,15 @@ class AssignmentPdfService extends Fpdf
         $this->sectionTitle('A. TIPO DE ENTREGA');
         $this->SetFont('Arial', '', 8);
         
-        // Dibujamos las opciones (Marcamos "Asignación" por defecto o según lógica)
-        $check = "X"; // Marca de selección
+        $check = "X"; 
         
-        $this->Cell(5, 5, $check, 1, 0, 'C'); // Checkbox Asignación
+        $this->Cell(5, 5, $check, 1, 0, 'C'); 
         $this->Cell(25, 5, utf8_decode('Asignación'), 0, 0);
         
-        $this->Cell(5, 5, '', 1, 0, 'C'); // Checkbox Préstamo
+        $this->Cell(5, 5, '', 1, 0, 'C'); 
         $this->Cell(25, 5, utf8_decode('Préstamo'), 0, 0);
         
-        $this->Cell(5, 5, '', 1, 0, 'C'); // Checkbox Devolución
+        $this->Cell(5, 5, '', 1, 0, 'C'); 
         $this->Cell(25, 5, utf8_decode('Devolución'), 0, 0);
 
         // Fecha
@@ -58,18 +63,19 @@ class AssignmentPdfService extends Fpdf
         $this->fieldRow([
             ['label' => 'Nombre Completo:', 'value' => $member ? $member->name : '', 'width' => 95],
             ['label' => 'No. Team Member:', 'value' => $member->tm_id ?? '', 'width' => 45],
-            ['label' => 'Reclutador:', 'value' => '53248', 'width' => 45] // Valor fijo del PDF o dinámico
+            ['label' => 'Reclutador:', 'value' => '53248', 'width' => 45] 
         ]);
 
-        // Fila 2: Puesto y Depto
+        $position = $member && isset($member->corporate_info['position']) ? $member->corporate_info['position'] : '';
+        $department = $member && isset($member->corporate_info['department']) ? $member->corporate_info['department'] : '';
+
         $this->fieldRow([
-            ['label' => 'Posición:', 'value' => $member->corporate_info['position'] ?? '', 'width' => 95],
-            ['label' => 'Departamento:', 'value' => $member->corporate_info['department'] ?? '', 'width' => 95]
+            ['label' => 'Posición:', 'value' => $position, 'width' => 95],
+            ['label' => 'Departamento:', 'value' => $department, 'width' => 95]
         ]);
         $this->Ln(2);
 
         // --- C. DESCRIPCIÓN DE EQUIPO (CÓMPUTO) ---
-        // Llenamos esta sección si es Laptop/Desktop, si no, se deja en blanco para formato
         $isComputer = $this->isCategory('Laptop') || $this->isCategory('Desktop');
         
         $this->sectionTitle('C. DESCRIPCIÓN DE EQUIPO (Cómputo / Tablet / Router)');
@@ -86,13 +92,14 @@ class AssignmentPdfService extends Fpdf
             ['label' => 'Mac Address:', 'value' => $isComputer ? ($this->asset->network['mac_address'] ?? '') : '', 'width' => 70]
         ]);
         
-        // Accesorios Checkboxes (Simulados)
+        // Accesorios Checkboxes
         $this->SetFont('Arial', 'B', 8);
         $this->Cell(0, 5, 'Accesorios Incluidos:', 0, 1);
         $this->SetFont('Arial', '', 8);
-        $acc = $isComputer ? ($this->asset->specs['accessories'] ?? []) : [];
         
-        $this->checkbox('Cargador', true); // Asumimos siempre entrega cargador
+        $acc = $isComputer ? ($specs['accessories'] ?? []) : [];
+        
+        $this->checkbox('Cargador', true); 
         $this->checkbox('Monitor', false);
         $this->checkbox('Teclado', false);
         $this->checkbox('Mouse', false);
@@ -101,7 +108,6 @@ class AssignmentPdfService extends Fpdf
         $this->Ln(5);
 
         // --- SECCIÓN CELULAR ---
-        // Llenamos si es categoría Phone/Celular
         $isPhone = $this->isCategory('Phone') || $this->isCategory('Celular') || $this->isCategory('Mobile');
         
         $this->SetFillColor(230, 230, 230);
@@ -111,15 +117,15 @@ class AssignmentPdfService extends Fpdf
         $this->fieldRow([
             ['label' => 'Marca:', 'value' => $isPhone ? $this->asset->info['brand'] : '', 'width' => 45],
             ['label' => 'Modelo:', 'value' => $isPhone ? $this->asset->info['model'] : '', 'width' => 45],
-            ['label' => 'IMEI / Serie:', 'value' => $isPhone ? ($this->asset->specs['imei'] ?? $this->asset->info['serial_number']) : '', 'width' => 50],
+            ['label' => 'IMEI / Serie:', 'value' => $isPhone ? ($specs['imei'] ?? $this->asset->info['serial_number']) : '', 'width' => 50],
             ['label' => 'Mac Address:', 'value' => $isPhone ? ($this->asset->network['mac_address'] ?? '') : '', 'width' => 50]
         ]);
 
         $this->fieldRow([
-            ['label' => 'Plan Celular:', 'value' => $isPhone ? ($this->asset->specs['plan'] ?? 'TELCEL PLUS EMP 3') : '', 'width' => 60],
-            ['label' => 'Compañía:', 'value' => $isPhone ? ($this->asset->specs['carrier'] ?? 'TELCEL') : '', 'width' => 40],
-            ['label' => 'No. Celular:', 'value' => $isPhone ? ($this->asset->specs['phone_number'] ?? '') : '', 'width' => 40],
-            ['label' => 'SIM:', 'value' => $isPhone ? ($this->asset->specs['sim'] ?? '') : '', 'width' => 50]
+            ['label' => 'Plan Celular:', 'value' => $isPhone ? ($specs['plan'] ?? 'TELCEL PLUS EMP 3') : '', 'width' => 60],
+            ['label' => 'Compañía:', 'value' => $isPhone ? ($specs['carrier'] ?? 'TELCEL') : '', 'width' => 40],
+            ['label' => 'No. Celular:', 'value' => $isPhone ? ($specs['phone_number'] ?? '') : '', 'width' => 40],
+            ['label' => 'SIM:', 'value' => $isPhone ? ($specs['sim'] ?? '') : '', 'width' => 50]
         ]);
 
         // Accesorios Celular
@@ -127,7 +133,6 @@ class AssignmentPdfService extends Fpdf
         $this->Cell(0, 5, 'Accesorios y Estado:', 0, 1);
         $this->SetFont('Arial', '', 8);
         
-        // Mapeamos specs del JSON si existen
         $this->checkbox('Cargador', $isPhone); 
         $this->checkbox('Cable USB', $isPhone);
         $this->checkbox('Audífonos', false);
@@ -141,7 +146,6 @@ class AssignmentPdfService extends Fpdf
         $this->Cell(30, 5, $isPhone ? strtoupper($this->asset->status) : '', 1, 1, 'C');
         $this->Ln(2);
 
-        // --- SECCIÓN OTROS ---
         $isOther = !$isComputer && !$isPhone;
         
         $this->SetFillColor(230, 230, 230);
@@ -158,12 +162,12 @@ class AssignmentPdfService extends Fpdf
         $this->SetFont('Arial', 'B', 8);
         $this->Cell(30, 8, utf8_decode('Descripción Adicional:'), 1);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(0, 8, utf8_decode($isOther ? ($this->asset->specs['description'] ?? '') : ''), 1, 1);
+        $this->Cell(0, 8, utf8_decode($isOther ? ($specs['description'] ?? '') : ''), 1, 1);
         $this->Ln(5);
 
-        // --- D. ACUERDO DE RESPONSABILIDAD (Texto Legal Exacto) ---
+        // --- D. ACUERDO DE RESPONSABILIDAD ---
         $this->sectionTitle('D. ACUERDO DE RESPONSABILIDAD');
-        $this->SetFont('Arial', '', 7.5); // Letra pequeña para legal
+        $this->SetFont('Arial', '', 7.5); 
         
         $legalText = "Declaro recibir el/los equipo(s) antes descritos en las condiciones señaladas, los cuales la empresa (Hospitality Services Maya SA de CV) me otorga en condición de préstamo y como herramienta de trabajo, para cumplir con mis funciones operativas dentro de la compañía.\n\n"
         . "Entiendo que el uso del equipo es para fines laborales exclusivamente, así mismo confirmo que son de mi conocimiento las políticas del correcto uso y consumo del plan celular, el cual ha sido asignado por un periodo de 24 meses.\n\n"
@@ -188,8 +192,8 @@ class AssignmentPdfService extends Fpdf
         $this->Ln(15);
 
         $y = $this->GetY();
-        $this->Line(30, $y, 90, $y);   // Línea Firma 1
-        $this->Line(120, $y, 180, $y); // Línea Firma 2
+        $this->Line(30, $y, 90, $y);   
+        $this->Line(120, $y, 180, $y); 
 
         $this->SetFont('Arial', 'B', 8);
         $this->Cell(95, 5, utf8_decode('Recibido por'), 0, 0, 'C');
@@ -199,7 +203,6 @@ class AssignmentPdfService extends Fpdf
         $this->Cell(95, 5, utf8_decode('Firma Miembro de Equipo'), 0, 0, 'C');
         $this->Cell(95, 5, utf8_decode('Firma IT Cluster Director'), 0, 1, 'C');
 
-        // Nombre del firmante debajo
         if ($member) {
             $this->Ln(2);
             $this->SetFont('Arial', 'I', 8);
@@ -213,11 +216,11 @@ class AssignmentPdfService extends Fpdf
 
     private function sectionTitle($title)
     {
-        $this->SetFillColor(0, 0, 0); // Negro
-        $this->SetTextColor(255, 255, 255); // Blanco
+        $this->SetFillColor(0, 0, 0); 
+        $this->SetTextColor(255, 255, 255); 
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(0, 6, utf8_decode("  $title"), 0, 1, 'L', true);
-        $this->SetTextColor(0, 0, 0); // Reset a negro
+        $this->SetTextColor(0, 0, 0); 
         $this->Ln(2);
     }
 
@@ -225,10 +228,11 @@ class AssignmentPdfService extends Fpdf
     {
         $this->SetFont('Arial', 'B', 8);
         foreach ($fields as $field) {
-            $this->Cell($field['width'] * 0.4, 6, utf8_decode($field['label']), 1, 0, 'L', false); // Etiqueta grisácea
+            $this->Cell($field['width'] * 0.4, 6, utf8_decode($field['label']), 1, 0, 'L', false); 
             $this->SetFont('Arial', '', 8);
-            $this->Cell($field['width'] * 0.6, 6, utf8_decode($field['value']), 1, 0, 'L');
-            $this->SetFont('Arial', 'B', 8); // Reset bold para siguiente etiqueta
+            $val = isset($field['value']) ? $field['value'] : '';
+            $this->Cell($field['width'] * 0.6, 6, utf8_decode($val), 1, 0, 'L');
+            $this->SetFont('Arial', 'B', 8); 
         }
         $this->Ln();
     }
