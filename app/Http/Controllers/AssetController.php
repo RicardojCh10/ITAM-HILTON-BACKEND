@@ -56,23 +56,20 @@ class AssetController extends Controller
      */
     public function downloadAssignment($id)
     {
-        // Buscamos el activo y cargamos la relación con el empleado
-        $asset = Asset::with(['assigned_to', 'location'])->findOrFail($id);
+       $asset = \App\Models\Asset::with(['member', 'property'])->findOrFail($id);
 
-        if (!$asset->member_id) {
-            return response()->json(['message' => 'Este activo no está asignado a nadie.'], 400);
-        }
+       if (!$asset->member_id) {
+           return response()->json(['message' => 'Este activo no está asignado a nadie.'], 400);
+       }
 
-        // Generamos el binario del PDF
-        $pdfContent = $this->assignmentPdfService->generatePdf($asset);
+       $pdfContent = $this->assignmentPdfService->generatePdf($asset);
 
-        // Preparamos el nombre del archivo (Sanitizado)
-        $filename = 'Acta_' . preg_replace('/[^A-Za-z0-9\-]/', '', $asset->serial_number) . '.pdf';
+       $filename = 'Acta_' . preg_replace('/[^A-Za-z0-9\-]/', '', $asset->serial_number) . '.pdf';
 
-        return response($pdfContent, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
-        ]);
+       return response($pdfContent, 200, [
+           'Content-Type' => 'application/pdf',
+           'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+       ]);
     }
 
     // Crear un nuevo Activo
