@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use Fpdf\Fpdf;
+use FPDF;
 use App\Models\Asset;
 use Carbon\Carbon;
 
-class AssignmentPdfService extends Fpdf
+class AssignmentPdfService extends FPDF
 {
     protected $asset;
 
