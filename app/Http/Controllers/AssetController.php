@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Asset;
 use App\Services\AssetService;
-// use App\Services\AssignmentPdfService;
+use App\Services\AssignmentPdfService;
 use App\Http\Requests\StoreAssetRequest;
 use App\Http\Requests\UpdateAssetRequest;
 use App\Http\Resources\AssetResource;
@@ -16,12 +17,11 @@ class AssetController extends Controller
     protected $assignmentPdfService;
 
     // Inyección de Dependencia del Servicio
-    public function __construct(AssetService $assetService)
-        // public function __construct(AssetService $assetService, AssignmentPdfService $assignmentPdfService)
+        public function __construct(AssetService $assetService, AssignmentPdfService $assignmentPdfService)
 
     {
         $this->assetService = $assetService;
-        // $this->assignmentPdfService = $assignmentPdfService;
+        $this->assignmentPdfService = $assignmentPdfService;
     }
 
     // Listar Activos con filtro por propiedad
@@ -51,26 +51,26 @@ class AssetController extends Controller
         return AssetResource::collection($assets);
     }
 
-    // public function downloadAssignment($id)
-    // {
-    //     // Buscamos el activo y cargamos la relación con el empleado
-    //     $asset = Asset::with(['assigned_to', 'location'])->findOrFail($id);
+    public function downloadAssignment($id)
+    {
+        // Buscamos el activo y cargamos la relación con el empleado
+        $asset = Asset::with(['assigned_to', 'location'])->findOrFail($id);
 
-    //     if (!$asset->member_id) {
-    //         return response()->json(['message' => 'Este activo no está asignado a nadie.'], 400);
-    //     }
+        if (!$asset->member_id) {
+            return response()->json(['message' => 'Este activo no está asignado a nadie.'], 400);
+        }
 
-    //     // Generamos el binario del PDF
-    //     $pdfContent = $this->assignmentPdfService->generatePdf($asset);
+        // Generamos el binario del PDF
+        $pdfContent = $this->assignmentPdfService->generatePdf($asset);
 
-    //     // Preparamos el nombre del archivo (Sanitizado)
-    //     $filename = 'Acta_' . preg_replace('/[^A-Za-z0-9\-]/', '', $asset->serial_number) . '.pdf';
+        // Preparamos el nombre del archivo (Sanitizado)
+        $filename = 'Acta_' . preg_replace('/[^A-Za-z0-9\-]/', '', $asset->serial_number) . '.pdf';
 
-    //     return response($pdfContent, 200, [
-    //         'Content-Type' => 'application/pdf',
-    //         'Content-Disposition' => 'inline; filename="' . $filename . '"',
-    //     ]);
-    // }
+        return response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+        ]);
+    }
 
     // Crear un nuevo Activo
       /**
