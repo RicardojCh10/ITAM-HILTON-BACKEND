@@ -51,6 +51,9 @@ class AssetController extends Controller
         return AssetResource::collection($assets);
     }
 
+    /**
+     * Descargar Acta de Asignación de Activo (PDF)
+     */
     public function downloadAssignment($id)
     {
         // Buscamos el activo y cargamos la relación con el empleado
