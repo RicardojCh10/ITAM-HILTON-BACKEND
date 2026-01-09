@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Codedge\Fpdf\Fpdf\Fpdf;
+use Fpdf\Fpdf;
 use App\Models\Asset;
 use Carbon\Carbon;
 
