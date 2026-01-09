@@ -16,7 +16,7 @@ class AssetController extends Controller
     protected $assignmentPdfService;
 
     // Inyección de Dependencia del Servicio
-    public function __construct(AssetService $assetService, AssignmentPdfService $assignmentPdfService)
+    public function __construct(AssetService $assetService)
         // public function __construct(AssetService $assetService, AssignmentPdfService $assignmentPdfService)
 
     {
