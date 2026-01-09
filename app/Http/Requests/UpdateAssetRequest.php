@@ -34,6 +34,15 @@ class UpdateAssetRequest extends FormRequest
             'specs.storage' => 'nullable|string',
             'specs.processor' => 'nullable|string',
             'specs.provider' => 'nullable|string|max:100',
-        ];
+
+            // CAMPOS PARA EL PDF (Móviles)
+            'specs.imei' => 'nullable|string|max:50',          
+            'specs.sim' => 'nullable|string|max:50',           
+            'specs.plan' => 'nullable|string|max:100',         
+            'specs.carrier' => 'nullable|string|max:50',      
+            'specs.phone_number' => 'nullable|string|max:20', 
+            'specs.accessories' => 'nullable|array',          
+            'specs.description' => 'nullable|string',
+            ];
     }
 }
