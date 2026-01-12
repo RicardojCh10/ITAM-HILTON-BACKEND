@@ -19,12 +19,13 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // 'allowed_origins' => ['*'],
 
-    // 'allowed_origins' => [
-    //     'http://localhost:5173', // Tu Vue en local
-    //     'https://tudominio.railway.app' // Tu Vue en producción (cuando lo tengas)
-    // ],
+    'allowed_origins' => [
+        'http://localhost:5173',                   // Frontend Local
+        'https://itam-hilton-backend-production.up.railway.app', //  Backend
+        '*' 
+    ],
 
     'allowed_origins_patterns' => [],
 
