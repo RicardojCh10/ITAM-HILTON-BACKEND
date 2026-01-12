@@ -10,10 +10,10 @@ sed -i "s/Listen 80/Listen ${PORT:-8080}/g" /etc/apache2/ports.conf
 sed -i "s/:80/:${PORT:-8080}/g" /etc/apache2/sites-enabled/000-default.conf
 
 # 2. Configuración de Laravel
-echo "🧹 Optimizando caché..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+echo "🧹 Limpiando caché (Modo Seguro)..."
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 
 # 3. Migraciones
 echo "📦 Migrando base de datos..."
