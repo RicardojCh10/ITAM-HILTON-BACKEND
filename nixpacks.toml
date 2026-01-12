@@ -1,0 +1,48 @@
+# nixpacks.toml
+[phases.setup]
+
+# Aquí instalamos PHP 8.2 y las librerías del sistema Linux necesarias (GD, PNG, JPEG)
+
+nixPkgs = [
+
+    "php82",
+
+    "php82Extensions.gd",
+
+    "php82Extensions.pdo",
+
+    "php82Extensions.pdo_pgsql",
+
+    "php82Extensions.bcmath",
+
+    "php82Extensions.intl",
+
+    "composer",
+
+    "zlib",
+
+    "libpng",
+
+    "libjpeg"
+
+]
+
+
+
+[phases.build]
+
+# Aquí instalamos las dependencias de Laravel
+
+# El flag --ignore-platform-req=ext-gd es seguro aquí porque YA instalamos GD arriba (en setup)
+
+cmds = [
+
+    "composer install --optimize-autoloader --no-dev --no-interaction --progress --ignore-platform-req=ext-gd",
+
+    "php artisan config:cache",
+
+    "php artisan route:cache",
+
+    "php artisan view:cache"
+
+] 
