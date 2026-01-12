@@ -99,8 +99,7 @@ class AssignmentPdfService extends FPDF
         // Usamos las variables mapeadas arriba ($mName, $mPos, etc.)
         $this->fieldRow([
             ['label' => 'Nombre Completo:', 'value' => $mName, 'width' => 100],
-            ['label' => 'No. Team Member:', 'value' => $mTmId, 'width' => 45],
-            ['label' => 'Reclutador:', 'value' => '53248', 'width' => 50] 
+            ['label' => 'No. Team Member:', 'value' => $mTmId, 'width' => 60],
         ]);
 
         $this->fieldRow([
@@ -175,11 +174,17 @@ class AssignmentPdfService extends FPDF
 
         // D. ACUERDO DE RESPONSABILIDAD
         $this->sectionTitle('D. ACUERDO DE RESPONSABILIDAD');
-        $this->SetFont('Arial', '', 7);
-        $legalText = "Declaro recibir el/los equipo(s) antes descritos en las condiciones señaladas, los cuales la empresa (Hospitality Services Maya SA de CV) me otorga en condición de préstamo y como herramienta de trabajo, para cumplir con mis funciones operativas dentro de la compañía. Entiendo que el uso del equipo es para fines laborales exclusivamente. El equipo deberá ser devuelto a la compañía en las mismas condiciones que se entregó, solo con el desgaste natural por uso.";
+
+        $this->SetFillColor(204, 221, 238); 
+        $this->SetFont('Arial', '', 7); 
+        $legalText = "Declaro recibir el/los equipo(s) antes descritos en las condiciones señaladas, los cuales la empresa (Hospitality Services Maya SA de CV) me otorga en condición de préstamo y como herramienta de trabajo, para cumplir con mis funciones operativas dentro de la compañía. Entiendo que el uso del equipo es para fines laborales exclusivamente, así mismo confirmo que son de mi conocimiento las políticas del correcto uso y consumo del plan celular, el cual ha sido asignado por un periodo de 24 meses. En caso de ocurrir algún daño o pérdida del equipo y/o accesorios, notificaré de inmediato al departamento de sistemas, a través de un correo electrónico, y este será revisado internamente.\n\n"
+        . "Si se determina que el daño ocasionado es por un acto de negligencia, seré responsable del pago conforme a lo estipulado en la LFT en su ART 110* verificado por el equipo de Finanzas, considerando la devaluación que por uso aplique. El pago de dicha responsabilidad se realizará a través de nómina o en el finiquito correspondiente.\n\n"
+        . "El equipo deberá ser devuelto a la compañía en las mismas condiciones que se entregó, solo con el desgaste natural por uso, para poder recibir el siguiente equipo durante el nuevo periodo de asignación, se considera daño físico grave pantalla rota, estrellada y golpes en la carcaza.\n\n"
+        . "*Art 110- El pago de deudas contraídas con el patrón por anticipo de salarios, pagos hechos con exceso al trabajador, errores, pérdidas, averías o adquisición de artículos producidos por la empresa o establecimiento. La cantidad exigible en ningún caso podrá ser mayor del importe de los salarios de un mes y el descuento será al que convengan el trabajador y el patrón, sin que pueda ser mayor del treinta por ciento del excedente del salario mínimo.";
+
+
         $this->MultiCell(0, 3.5, $this->safeDecode($legalText), 1, 'J', false);
         
-        $this->SetFillColor(204, 221, 238);
         $this->SetFont('Arial', 'B', 8);
         $this->Ln(2);
         
