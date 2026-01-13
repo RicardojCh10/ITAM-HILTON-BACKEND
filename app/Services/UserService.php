@@ -24,6 +24,7 @@ class UserService
         if ($search) {
                 $query->where(function($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('last_name', 'LIKE', "%{$search}%")
                 ->orWhere('email', 'LIKE', "%{$search}%");
             });
         }

@@ -18,6 +18,7 @@ class User extends Authenticatable implements JWTSubject
    
     protected $fillable = [
         'name',
+        'last_name',
         'email',
         'password',
         'role',
@@ -41,6 +42,11 @@ class User extends Authenticatable implements JWTSubject
     public function property()
     {
         return $this->belongsTo(Property::class, 'property_id');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->name} {$this->last_name}");
     }
 
     public function getJWTCustomClaims()

@@ -28,8 +28,10 @@ class MemberService
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('last_name', 'LIKE', "%{$search}%")
                   ->orWhere('email', 'LIKE', "%{$search}%")
                   ->orWhere('tm_id', 'LIKE', "%{$search}%")
+                  ->orWhere('hilton_id', 'LIKE', "%{$search}%")
                   ->orWhere('onq_id', 'LIKE', "%{$search}%");
             });
         }

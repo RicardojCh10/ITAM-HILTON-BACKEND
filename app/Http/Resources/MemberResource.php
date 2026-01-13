@@ -22,7 +22,11 @@ class MemberResource extends JsonResource
             }),
 
             'tm_id' => $this->tm_id,
+            'hilton_id' => $this->hilton_id,
+
             'name' => $this->name,
+            'last_name' => $this->last_name,
+            'full_name' => $this->full_name,
             'email' => $this->email,
             
             'corporate_info' => [

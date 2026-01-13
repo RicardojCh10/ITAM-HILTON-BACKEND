@@ -23,7 +23,11 @@ class StoreMemberRequest extends FormRequest
             // --- DATOS PRINCIPALES ---
             'tm_id' => 'nullable|string|max:50',
 
+            'hilton_id' => 'nullable|string|max:50',
+
             'name' => 'required|string|max:150',
+
+            'last_name' => 'nullable|string|max:150',
 
             'email' => 'nullable|email|max:150',
 
@@ -34,6 +38,8 @@ class StoreMemberRequest extends FormRequest
             'onq_id' => 'nullable|string|max:50',
 
             'status' => 'nullable|string|max:20',
+
+            'hire_date' => 'nullable|date',
 
             // --- JSON DETAILS (Flexible) ---
             'details' => 'nullable|array',

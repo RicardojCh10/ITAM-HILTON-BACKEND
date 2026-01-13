@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate([
             'email' => 'admin@hilton.com' 
         ], [
-            'name' => 'ITAM Admin',
+            'name' => 'ITAM',
+            'last_name' => 'Admin',
             'email' => 'admin@hilton.com',
             'password' => Hash::make('superuser-itam'), 
             'role' => 'admin',

@@ -18,7 +18,8 @@ class UpdateUserRequest extends FormRequest
         $userId = $this->route('user');
 
         return [
-            'name' => 'sometimes|string|max:150',
+            'name' => 'sometimes|string|max:100',
+            'last_name' => 'sometimes|string|max:100',
             'email' => [
                 'sometimes', 
                 'email', 

@@ -11,23 +11,30 @@ class Member extends Model
 
     const UPDATED_AT = null;
 
-    //Campos que se pueden asignar masivamente
     protected $fillable = [
         'property_id',
-        'tm_id',
-        'name',
+        'tm_id',     
+        'hilton_id',  
+        'name',       
+        'last_name',  
         'email',
         'position',
         'department',
-        'onq:id',
+        'onq:id',     
         'status', 
-        'details', // Campo JSON para detalles adicionales
+        'hire_date',  
+        'details',
     ];
 
-    //Definición de casts para atributos específicos
     protected $casts = [
         'details' => 'array',
+        'hire_date' => 'date', 
     ];
+
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->name} {$this->last_name}");
+    }
 
     public function property()
     {
