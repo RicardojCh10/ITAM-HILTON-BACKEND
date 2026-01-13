@@ -20,7 +20,7 @@ class Member extends Model
         'email',
         'position',
         'department',
-        'onq:id',     
+        'onq_id',     
         'status', 
         'hire_date',  
         'details',
