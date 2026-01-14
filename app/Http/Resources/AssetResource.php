@@ -23,6 +23,8 @@ class AssetResource extends JsonResource
             'assigned_to' => $this->member ? [
                 'member_id' => $this->member->id,
                 'name' => $this->member->name,
+                'last_name' => $this->member->last_name,
+                'full_name' => $this->member->full_name,
                 'email' => $this->member->email,
                 'department' => $this->member->department ?? null,
             ] : null,
