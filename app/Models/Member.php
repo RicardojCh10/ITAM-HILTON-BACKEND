@@ -23,12 +23,14 @@ class Member extends Model
         'onq_id',     
         'status', 
         'hire_date',  
+        'termination_date',
         'details',
     ];
 
     protected $casts = [
         'details' => 'array',
         'hire_date' => 'date', 
+        'termination_date' => 'date',
     ];
 
     public function getFullNameAttribute()

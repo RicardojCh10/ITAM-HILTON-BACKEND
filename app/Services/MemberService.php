@@ -3,6 +3,10 @@
 namespace App\Services;
 
 use App\Models\Member;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\MembersImport;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 
@@ -61,9 +65,57 @@ class MemberService
         return $member;
     }
 
-    public function deleteMember($id)
+    // public function deleteMember($id)
+    // {
+    //     $member = Member::findOrFail($id);
+    //     $member->delete();
+    // }
+
+    // Nuevo método para dar de baja a un miembro
+    public function retireMember($id)
     {
         $member = Member::findOrFail($id);
-        $member->delete();
+        $member->update([
+            'status' => 'inactive',
+            'termination_date' => Carbon::now(),
+        ]);
+
+        return $member;
+    }
+
+    // Método para obtener estadísticas quincenales de altas y bajas
+    public function getBiweeklyStats()
+    {
+        $startDate = Carbon::now()->subDays(15);
+        $endDate = Carbon::now();
+
+        // Contamos Altas (basado en hire_date o created_at según tu regla de negocio)
+        $altas = Member::whereBetween('hire_date', [$startDate, $endDate])->count();
+
+        // Contamos Bajas (basado en termination_date)
+        $bajas = Member::where('status', 'BAJA')
+                       ->whereBetween('termination_date', [$startDate, $endDate])
+                       ->count();
+
+        return [
+            'period' => [
+                'start' => $startDate->toDateString(),
+                'end' => $endDate->toDateString()
+            ],
+            'stats' => [
+                'altas' => $altas,
+                'bajas' => $bajas,
+                'difference' => $altas - $bajas // Balance neto
+            ]
+        ];
+    }
+
+    // Método para importar miembros desde un archivo Excel
+    public function importMembers($file)
+    {
+        // Usamos una transacción para que si falla una fila crítica, no se guarde basura
+        DB::transaction(function () use ($file) {
+            Excel::import(new MembersImport, $file);
+        });
     }
 }

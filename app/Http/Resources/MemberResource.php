@@ -36,6 +36,7 @@ class MemberResource extends JsonResource
             ],
             
             'hire_date' => $this->hire_date ? $this->hire_date->format('Y-m-d') : null,
+            'termination_date' => $this->termination_date ? $this->termination_date->format('Y-m-d') : null,
             'status' => $this->status,
             'details' => $this->details, // Devuelve el JSON completo
             'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,

@@ -40,6 +40,8 @@ class StoreMemberRequest extends FormRequest
             'status' => 'nullable|string|max:20',
 
             'hire_date' => 'nullable|date',
+            
+            'termination_date' => 'nullable|date|after_or_equal:hire_date',
 
             // --- JSON DETAILS (Flexible) ---
             'details' => 'nullable|array',

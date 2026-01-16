@@ -27,6 +27,7 @@ class UpdateMemberRequest extends FormRequest
             'onq_id' => 'nullable|string|max:50',
             'status' => 'sometimes|string|max:20',
             'hire_date' => 'nullable|date',
+            'termination_date' => 'nullable|date|after_or_equal:hire_date',
             
             // Permitimos actualizar detalles parciales
             'details' => 'nullable|array',

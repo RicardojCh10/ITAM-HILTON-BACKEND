@@ -64,10 +64,42 @@ class MemberController extends Controller
     /**
      * Eliminar Miembro
      */
+    // public function destroy($id)
+    // {
+    //     $this->memberService->deleteMember($id);
+
+    //     return response()->json(['message' => 'Miembro eliminado exitosamente']);
+    // }
     public function destroy($id)
     {
-        $this->memberService->deleteMember($id);
+        $this->memberService->retireMember($id);
 
-        return response()->json(['message' => 'Miembro eliminado exitosamente']);
+        return response()->json(['message' => 'Miembro dado de Baja exitosamente']);
     }
+
+
+    // Nuevo Endpoint para Importar
+    /**
+     * Importar Miembros desde Excel
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        $this->memberService->importMembers($request->file('file'));
+        return response()->json(['message' => 'Importación completada']);
+    }
+
+    // Nuevo Endpoint para Stats
+    /** 
+     * Obtener estadísticas quincenales de altas y bajas
+     */
+    public function stats()
+    {
+        $data = $this->memberService->getBiweeklyStats();
+        return response()->json($data);
+    }
+
 }
