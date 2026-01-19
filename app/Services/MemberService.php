@@ -76,7 +76,7 @@ class MemberService
     {
         $member = Member::findOrFail($id);
         $member->update([
-            'status' => 'inactive',
+            'status' => 'BAJA',
             'termination_date' => Carbon::now(),
         ]);
 

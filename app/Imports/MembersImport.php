@@ -4,20 +4,29 @@ namespace App\Imports;
 
 use App\Models\Member;
 use App\Models\Property;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
 class MembersImport implements ToModel, WithHeadingRow, WithValidation
 {
-   
     public function model(array $row)
     {
-        // Lógica para encontrar la propiedad por nombre o código si viene en el Excel
-        // Asumimos que en el Excel viene una columna 'property_code' (ej: CUNQR)
-        $property = Property::where('code', $row['property_code'])->first();
-        
-        if (!$property) return null; // O lanzar error
+        $inputProperty = trim($row['property_code']);
+
+        // 1. Buscamos por código
+        $property = Property::where('code', $inputProperty)->first();
+
+        // 2. Si no hay código y es numérico, buscamos por ID
+        if (!$property && is_numeric($inputProperty)) {
+            $property = Property::find($inputProperty);
+        }
+
+        // 3. Si sigue sin existir, lanzamos error
+        if (!$property) {
+            throw new \Exception("Error en la fila: No se encontró ninguna propiedad con código o ID: '{$inputProperty}'");
+        }
 
         return new Member([
             'property_id' => $property->id,
@@ -29,17 +38,35 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
             'position'    => $row['position'],
             'department'  => $row['department'],
             'onq_id'      => $row['onq_id'],
-            'status'      => 'ACTIVO', // Default al importar
-            'hire_date'   => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['hire_date']),
+            'status'      => 'Active', // Cambiado a 'Active' para consistencia con tus otros datos
+            
+            'hire_date'   => $this->transformDate($row['hire_date']),
+            
             'details'     => ['notes' => 'Importado masivamente'],
         ]);
     }
 
-    // Reglas de validación para cada fila
+    // Transforma fechas de Excel o cadenas a Carbon
+    private function transformDate($value)
+    {
+        if (empty($value)) return null;
+
+        try {
+            if (is_numeric($value)) {
+                return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value);
+            }
+            
+            return Carbon::parse($value);
+            
+        } catch (\Exception $e) {
+            return null; 
+        }
+    }
+
     public function rules(): array
     {
         return [
-            'email' => 'unique:members,email', // Evitar duplicados
+            'email' => 'unique:members,email',
             'tm_id' => 'required',
             'property_code' => 'required',
         ];

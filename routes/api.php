@@ -31,10 +31,12 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // Properties
     Route::apiResource('properties', PropertyController::class);
+
     // Members
-    Route::apiResource('members', MemberController::class);
     Route::post('members/import', [MemberController::class, 'import']);
     Route::get('members/stats', [MemberController::class, 'stats']);
+    Route::apiResource('members', MemberController::class);
+    
     // Maintenance Logs
     Route::apiResource('maintenance-logs', MaintenanceLogController::class);
 
