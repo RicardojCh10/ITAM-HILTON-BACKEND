@@ -8,24 +8,27 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 
-class MembersImport implements ToModel, WithHeadingRow, WithValidation
+class MembersImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows
 {
     public function model(array $row)
     {
+
+        if (!isset($row['tm_id']) || !isset($row['property_code'])) {
+            return null;
+        }
+
         $inputProperty = trim($row['property_code']);
 
-        // 1. Buscamos por código
         $property = Property::where('code', $inputProperty)->first();
 
-        // 2. Si no hay código y es numérico, buscamos por ID
         if (!$property && is_numeric($inputProperty)) {
             $property = Property::find($inputProperty);
         }
 
-        // 3. Si sigue sin existir, lanzamos error
         if (!$property) {
-            throw new \Exception("Error en la fila: No se encontró ninguna propiedad con código o ID: '{$inputProperty}'");
+            return null; 
         }
 
         return new Member([
@@ -38,7 +41,7 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
             'position'    => $row['position'],
             'department'  => $row['department'],
             'onq_id'      => $row['onq_id'],
-            'status'      => 'Active', // Cambiado a 'Active' para consistencia con tus otros datos
+            'status'      => isset($row['status']) ? strtoupper(trim($row['status'])) : 'ACTIVO',
             
             'hire_date'   => $this->transformDate($row['hire_date']),
             

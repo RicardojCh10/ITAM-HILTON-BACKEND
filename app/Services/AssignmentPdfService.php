@@ -29,7 +29,7 @@ class AssignmentPdfService extends FPDF
 
         // Datos del Miembro
         $member = $this->asset->member; 
-        $mName  = $member->name ?? '';
+        $mName  = $member->full_name ?? '';
         $mTmId  = $member->tm_id ?? '';
         $mPos   = $member->position ?? '';    // Columna directa
         $mDep   = $member->department ?? '';  // Columna directa
@@ -99,7 +99,7 @@ class AssignmentPdfService extends FPDF
         // Usamos las variables mapeadas arriba ($mName, $mPos, etc.)
         $this->fieldRow([
             ['label' => 'Nombre Completo:', 'value' => $mName, 'width' => 100],
-            ['label' => 'No. Team Member:', 'value' => $mTmId, 'width' => 60],
+            ['label' => 'NO. Team Member:', 'value' => $mTmId, 'width' => 90],
         ]);
 
         $this->fieldRow([
@@ -203,9 +203,10 @@ class AssignmentPdfService extends FPDF
         $boxW = 63;
         $boxH = 20;
 
-        // HR
+        
+        // IT
         $this->SetXY(10, $y);
-        $this->Cell($boxW, 5, 'Firma de HR', 1, 0, 'C', true);
+        $this->Cell($boxW, 5, 'Firma IT Cluster Director', 1, 0, 'C', true);
         $this->SetXY(10, $y+5);
         $this->Cell($boxW, $boxH, '', 1, 0);
 
@@ -215,9 +216,9 @@ class AssignmentPdfService extends FPDF
         $this->SetXY(10 + $boxW + 2, $y+5);
         $this->Cell($boxW, $boxH, '', 1, 0);
 
-        // IT
+        // RH
         $this->SetXY(10 + ($boxW*2) + 4, $y);
-        $this->Cell($boxW, 5, 'Firma IT Cluster Director', 1, 0, 'C', true);
+        $this->Cell($boxW, 5, 'Firma Recursos Humanos', 1, 0, 'C', true);
         $this->SetXY(10 + ($boxW*2) + 4, $y+5);
         $this->Cell($boxW, $boxH, '', 1, 0);
 

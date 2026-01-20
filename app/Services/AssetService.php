@@ -3,7 +3,11 @@
 namespace App\Services;
 
 use App\Models\Asset;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\AssetsImport;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class AssetService
 {
@@ -73,4 +77,13 @@ class AssetService
         $asset = Asset::findOrFail($id);
         $asset->delete();
     }
+
+    //Importar Activos desde Excel
+    public function importAssets($file)
+    {
+    DB::transaction(function () use ($file) {
+        Excel::import(new \App\Imports\AssetsImport, $file);
+    });
+    }
+
 }

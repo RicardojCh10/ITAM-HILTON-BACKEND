@@ -121,4 +121,18 @@ class AssetController extends Controller
         $this->assetService->deleteAsset($id);
         return response()->json(['message' => 'Activo eliminado exitosamente']);
     }
+
+    //Nuevo Endpoint para Importar
+    /**
+     * Importar Activos desde Excel
+     */
+    public function import(Request $request)
+    {
+    $request->validate(['file' => 'required|mimes:xlsx,xls']);
+    
+    $this->assetService->importAssets($request->file('file'));
+
+    return response()->json(['message' => 'Carga de activos completada']);
+    }
+
 }

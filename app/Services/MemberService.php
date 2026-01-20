@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Models\Member;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\MembersImport;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 
@@ -113,7 +113,6 @@ class MemberService
     // Método para importar miembros desde un archivo Excel
     public function importMembers($file)
     {
-        // Usamos una transacción para que si falla una fila crítica, no se guarde basura
         DB::transaction(function () use ($file) {
             Excel::import(new MembersImport, $file);
         });

@@ -26,6 +26,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::apiResource('users', UserController::class);
 
     // Assets 
+    Route::post('assets/import', [AssetController::class, 'import']);
     Route::get('/assets/{id}/download-assignment', [AssetController::class, 'downloadAssignment']);
     Route::apiResource('assets', AssetController::class);
 
