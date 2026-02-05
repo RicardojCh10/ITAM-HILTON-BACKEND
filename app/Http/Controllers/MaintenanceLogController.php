@@ -25,7 +25,8 @@ class MaintenanceLogController extends Controller
     {
         $assetId = $request->query('asset_id');
         $perPage = $request->query('per_page', 15);
-        $logs = $this->maintenanceLogService->getLogs($assetId, $perPage);
+        $event_type = $request->query('event_type');
+        $logs = $this->maintenanceLogService->getLogs($assetId, $perPage, $event_type);
 
         return MaintenanceLogResource::collection($logs);
     }

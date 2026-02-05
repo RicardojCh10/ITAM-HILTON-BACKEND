@@ -13,6 +13,7 @@ class Asset extends Model
     protected $fillable = [        
         'property_id',
         'member_id',
+        'provider_id',
         'category',
         'brand',
         'model',
@@ -42,6 +43,12 @@ class Asset extends Model
     {
         //Dueño del activo
         return $this->belongsTo(Member::class);
+    }
+
+    public function provider()
+    {
+        //Proveedor asociado al activo
+        return $this->belongsTo(Provider::class);
     }
 
     public function maintenanceLogs()

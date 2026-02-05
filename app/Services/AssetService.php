@@ -20,17 +20,19 @@ class AssetService
         $search = null, 
         $categoryId = null, 
         $status = null,
-        $memberId = null
+        $memberId = null,
+        $providerId = null
     ): LengthAwarePaginator
     {
         // 1. Iniciar Query con Relaciones
-        $query = Asset::with(['property', 'member'])->orderBy('id', 'desc');
+        $query = Asset::with(['property', 'member', 'provider'])->orderBy('id', 'desc');
 
         // 2. Filtros
         if ($propertyId) $query->where('property_id', $propertyId);
         if ($categoryId) $query->where('category', $categoryId);
         if ($status) $query->where('status', $status);
         if ($memberId) $query->where('member_id', $memberId);
+        if ($providerId) $query->where('provider_id', $providerId);
 
         // 3. Búsqueda Avanzada
         if ($search) {
@@ -50,12 +52,12 @@ class AssetService
     public function createAsset(array $data)
     {
         $asset = Asset::create($data);
-        return $asset->load(['property', 'member']);
+        return $asset->load(['property', 'member', 'provider']);
     }
 
     public function getAssetById($id)
     {
-        return Asset::with(['property', 'member', 'maintenanceLogs'])->findOrFail($id);
+        return Asset::with(['property', 'member', 'provider', 'maintenanceLogs'])->findOrFail($id);
     }
 
     public function updateAsset($id, array $data)

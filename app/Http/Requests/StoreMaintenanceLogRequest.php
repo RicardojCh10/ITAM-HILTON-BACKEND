@@ -6,9 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMaintenanceLogRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
@@ -18,10 +15,12 @@ class StoreMaintenanceLogRequest extends FormRequest
     {
         return [
             'asset_id' => 'required|integer|exists:assets,id',
-            'event_type' => 'required|string|in:falla,mantenimiento_preventivo,asignacion,baja,otro',
-            'title' => 'nullable|string|max:150',
+            
+            'event_type' => 'required|string|in:repair,warranty,damage,inspection,license,other',
+            
+            'title' => 'required|string|max:150', // Cambié a required porque suele ser obligatorio
             'description' => 'nullable|string',
-            'cost' => 'nullable|numeric|min:0',
+            'cost' => 'required|numeric|min:0',    // Cambié a required si es importante para finanzas
             'event_date' => 'required|date',
             'resolved_date' => 'nullable|date|after_or_equal:event_date',
         ];

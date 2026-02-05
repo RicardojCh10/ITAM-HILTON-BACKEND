@@ -37,6 +37,7 @@ class AssetController extends Controller
         $category = $request->query('category');
         $status = $request->query('status');
         $memberId = $request->query('member_id');
+        $providerId = $request->query('provider_id');
 
        $assets = $this->assetService->getAllAssets(
             $perPage, 
@@ -44,7 +45,8 @@ class AssetController extends Controller
             $search, 
             $category, 
             $status,
-            $memberId
+            $memberId,
+            $providerId
         );
         
         // Retornamos la colección formateada

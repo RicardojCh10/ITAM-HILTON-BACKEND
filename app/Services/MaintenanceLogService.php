@@ -3,22 +3,33 @@
 namespace App\Services;
 
 use App\Models\MaintenanceLog;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class MaintenanceLogService
 {
     /**
      * Obtener logs. Opcional: filtrar por activo.
      */
-    public function getLogs($assetId = null, $perPage = 15)
+    public function getLogs(
+        $assetId = null, $perPage = 15, $event_type = null
+    ): LengthAwarePaginator
+
     {
-        $query = MaintenanceLog::query();
+    $query = MaintenanceLog::with(['reporter', 'asset.member', 'asset.property']);
 
-        if ($assetId) {
-            $query->where('asset_id', $assetId);
-        }
+    if ($assetId) {
+        $query->where('asset_id', $assetId);
+    }
+    
+    // Filtros adicionales útiles para finanzas
+    if($event_type) {
+        $query->where('event_type', $event_type);
+    }
+    // if (request('event_type')) $query->where('event_type', request('event_type'));
 
-        // Ordenamos por fecha del evento (el más reciente primero)
-        return $query->orderBy('event_date', 'desc')->paginate($perPage);
+    return $query->orderBy('event_date', 'desc')->paginate($perPage);   
     }
 
     public function createLog(array $data)
@@ -28,7 +39,7 @@ class MaintenanceLogService
 
     public function getLogById($id)
     {
-        return MaintenanceLog::findOrFail($id);
+       return MaintenanceLog::with(['reporter', 'asset.member', 'asset.property'])->findOrFail($id);
     }
 
     public function updateLog($id, array $data)

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PropertyController;
@@ -24,6 +25,9 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // Users
     Route::apiResource('users', UserController::class);
+
+    // Providers
+    Route::apiResource('providers', ProviderController::class);
 
     // Assets 
     Route::post('assets/import', [AssetController::class, 'import']);

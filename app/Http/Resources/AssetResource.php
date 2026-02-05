@@ -20,12 +20,23 @@ class AssetResource extends JsonResource
                 'property_name' => $this->property->name ?? 'Desconocido',
             ],
 
+            'provider' => $this->provider ? [
+            'provider_id' => $this->provider->id,
+            'name' => $this->provider->name,
+            'tax_id' => $this->provider->tax_id, 
+            'email' => $this->provider->email,
+            'phone' => $this->provider->phone,
+            'contact_name' => $this->provider->contact_name,
+             ] : null,
+
             'assigned_to' => $this->member ? [
                 'member_id' => $this->member->id,
+                'tm_id' => $this->member->tm_id,
                 'name' => $this->member->name,
                 'last_name' => $this->member->last_name,
                 'full_name' => $this->member->full_name,
                 'email' => $this->member->email,
+                'position' => $this->member->position ?? null,
                 'department' => $this->member->department ?? null,
             ] : null,
             
@@ -56,7 +67,7 @@ class AssetResource extends JsonResource
                 'ram' => data_get($specs, 'ram'),
                 'storage' => data_get($specs, 'storage'),
                 'processor' => data_get($specs, 'processor'),
-                'provider' => data_get($specs, 'provider'),
+                // 'provider' => data_get($specs, 'provider'),
                 
                 'imei' => data_get($specs, 'imei'),
                 'sim' => data_get($specs, 'sim'),

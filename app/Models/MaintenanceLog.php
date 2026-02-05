@@ -14,8 +14,8 @@ class MaintenanceLog extends Model
 
     protected $fillable = [
         'asset_id',
-        'reported_by', //ID del miembro que reportó el mantenimiento
-        'event_type', //Tipo de evento: 'repair', 'inspection', 'upgrade', etc.
+        'reported_by', 
+        'event_type', 
         'title',
         'description',
         'cost',

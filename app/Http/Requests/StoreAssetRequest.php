@@ -16,6 +16,7 @@ class StoreAssetRequest extends FormRequest
         return [
            // VINCULACIÓN (Vital)
             'property_id' => 'required|integer|exists:properties,id',
+            'provider_id' => 'required|integer|exists:providers,id',
             'member_id'   => 'nullable|integer|exists:members,id', // Puede ser null (Stock)
 
             // DATOS BÁSICOS
@@ -41,7 +42,7 @@ class StoreAssetRequest extends FormRequest
             'specs.ram' => 'nullable|string',
             'specs.storage' => 'nullable|string',
             'specs.processor' => 'nullable|string',
-            'specs.provider' => 'nullable|string|max:100',
+            // 'specs.provider' => 'nullable|string|max:100',
 
             // CAMPOS PARA EL PDF (Móviles)
             'specs.imei' => 'nullable|string|max:50',          
