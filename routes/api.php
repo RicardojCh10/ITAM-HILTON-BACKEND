@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\PositionController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AuthController;
@@ -25,6 +27,13 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // Users
     Route::apiResource('users', UserController::class);
+
+    // Departments
+    Route::apiResource('departments', DepartmentController::class);
+
+    // Positions
+    Route::apiResource('positions', PositionController::class);
+
 
     // Providers
     Route::apiResource('providers', ProviderController::class);

@@ -19,6 +19,7 @@ class StoreMemberRequest extends FormRequest
         return [
             // --- VINCULACIÓN ---
             'property_id' => 'required|integer|exists:properties,id',
+            'position_id' => 'nullable|integer|exists:positions,id',
 
             // --- DATOS PRINCIPALES ---
             'tm_id' => 'nullable|string|max:50',
@@ -42,6 +43,11 @@ class StoreMemberRequest extends FormRequest
             'hire_date' => 'nullable|date',
             
             'termination_date' => 'nullable|date|after_or_equal:hire_date',
+
+            'admission_date' => 'nullable|date',
+
+            'hire_end_date' => 'nullable|date',
+
 
             // --- JSON DETAILS (Flexible) ---
             'details' => 'nullable|array',

@@ -12,6 +12,7 @@ class MemberResource extends JsonResource
         return [
             'id' => $this->id,
             'property_id' => $this->property_id,
+            'position_id' => $this->position_id,
             
             'property' => $this->whenLoaded('property', function () {
                 return [
@@ -21,6 +22,16 @@ class MemberResource extends JsonResource
                 ];
             }),
 
+          'position_details' => $this->position ? [ // Verificamos si existe la relación (no es null)
+            'id' => $this->position->id,
+            'name' => $this->position->name,
+            'department_id' => $this->position->department_id,
+            'department' => $this->position->department ? [
+            'id' => $this->position->department->id,
+            'name' => $this->position->department->name,
+            ] : null,
+            ] : null,
+
             'tm_id' => $this->tm_id,
             'hilton_id' => $this->hilton_id,
 
@@ -29,14 +40,18 @@ class MemberResource extends JsonResource
             'full_name' => $this->full_name,
             'email' => $this->email,
             
-            'corporate_info' => [
-                'position' => $this->position,
-                'department' => $this->department,
+             'corporate_info' => [
+                'position' => $this->position?->name ?? 'Sin Puesto',
+                
+                'department' => $this->position?->department?->name ?? 'Sin Departamento',
+                
                 'onq_id' => $this->onq_id,
             ],
             
             'hire_date' => $this->hire_date ? $this->hire_date->format('Y-m-d') : null,
             'termination_date' => $this->termination_date ? $this->termination_date->format('Y-m-d') : null,
+            'admission_date' => $this->admission_date ? $this->admission_date->format('Y-m-d') : null,
+            'hire_end_date' => $this->hire_end_date ? $this->hire_end_date->format('Y-m-d') : null,
             'status' => $this->status,
             'details' => $this->details, // Devuelve el JSON completo
             'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,

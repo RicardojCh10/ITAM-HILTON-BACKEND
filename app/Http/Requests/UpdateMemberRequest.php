@@ -15,6 +15,7 @@ class UpdateMemberRequest extends FormRequest
     {
         return [
             'property_id' => 'sometimes|integer|exists:properties,id',
+            'position_id' => 'sometimes|integer|exists:positions,id',
             'tm_id' => 'nullable|string|max:50',
             'hilton_id' => 'nullable|string|max:50',
 
@@ -28,6 +29,8 @@ class UpdateMemberRequest extends FormRequest
             'status' => 'sometimes|string|max:20',
             'hire_date' => 'nullable|date',
             'termination_date' => 'nullable|date|after_or_equal:hire_date',
+            'admission_date' => 'nullable|date',
+            'hire_end_date' => 'nullable|date',
             
             // Permitimos actualizar detalles parciales
             'details' => 'nullable|array',

@@ -9,21 +9,31 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-
 class MemberService
 {
-    public function getAllMembers($perPage = 15, $propertyId = null, $search = null, $department = null, $status = null): LengthAwarePaginator
+    public function getAllMembers($perPage = 15,
+     $propertyId = null,
+      $search = null,
+       $department = null,
+        $status = null,
+         $positionId = null): LengthAwarePaginator
     {
-        $query = Member::with('property')->orderBy('id', 'desc');
-
+        $query = Member::with(['property', 'position.department'])->orderBy('id', 'desc');
+        
         // Filtros opcionales
         if ($propertyId) {
             $query->where('property_id', $propertyId);
         }
 
-        if ($department) {
-            $query->where('department', 'LIKE', "%{$department}%");
+        if ($positionId) {
+            $query->where('position_id', $positionId);
         }
+
+        if ($department) {
+        $query->whereHas('position.department', function($q) use ($department) {
+            $q->where('name', 'LIKE', "%{$department}%");
+        });
+    }
 
         if ($status) {
             $query->where('status', $status); 

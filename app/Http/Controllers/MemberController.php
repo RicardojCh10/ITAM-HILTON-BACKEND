@@ -28,8 +28,9 @@ class MemberController extends Controller
         $search = $request->query('search');    
         $department = $request->query('department');
         $status = $request->query('status');
+        $positionId = $request->query('position_id');
 
-        $members = $this->memberService->getAllMembers($perPage, $propertyId, $search, $department, $status);
+        $members = $this->memberService->getAllMembers($perPage, $propertyId, $search, $department, $status, $positionId);
         
         return MemberResource::collection($members);
     }
@@ -50,6 +51,8 @@ class MemberController extends Controller
     {
         $member = $this->memberService->getMemberById($id);
         return new MemberResource($member);
+            // $member = Member::with(['property', 'position.department'])->findOrFail($id);
+            // return new MemberResource($member);
     }
 
     /**
