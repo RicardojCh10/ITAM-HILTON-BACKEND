@@ -17,7 +17,7 @@ class MaintenanceLogService
     ): LengthAwarePaginator
 
     {
-    $query = MaintenanceLog::with(['reporter', 'asset.member', 'asset.property']);
+    $query = MaintenanceLog::with(['reporter', 'asset.member.position.department', 'asset.property']);
 
     if ($assetId) {
         $query->where('asset_id', $assetId);

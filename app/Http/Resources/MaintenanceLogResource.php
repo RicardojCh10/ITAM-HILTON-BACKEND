@@ -16,8 +16,8 @@ class MaintenanceLogResource extends JsonResource
             'current_holder' => ($this->asset && $this->asset->member) ? [
                 'id' => $this->asset->member->id,
                 'full_name' => $this->asset->member->full_name, 
-                'department' => $this->asset->member->department,
-                'position' => $this->asset->member->position,
+                'department' => $this->asset->member->position?->department?->name ?? 'Sin Departamento',
+                'position' => $this->asset->member->position?->name ?? 'Sin Puesto',
             ] : null,
 
             // DATOS DEL ACTIVO

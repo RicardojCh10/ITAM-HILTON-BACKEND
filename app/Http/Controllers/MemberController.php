@@ -64,22 +64,31 @@ class MemberController extends Controller
         return new MemberResource($member);
     }
 
-    /**
-     * Eliminar Miembro
+   /**
+     * Admitir Miembro en ITAM
      */
-    // public function destroy($id)
-    // {
-    //     $this->memberService->deleteMember($id);
-
-    //     return response()->json(['message' => 'Miembro eliminado exitosamente']);
-    // }
-    public function destroy($id)
+    public function admit($id)
     {
-        $this->memberService->retireMember($id);
+        $member = $this->memberService->admitMember($id);
 
-        return response()->json(['message' => 'Miembro dado de Baja exitosamente']);
+        return response()->json([
+            'message' => 'Admission Date registrada. Miembro ACTIVO operativamente.',
+            'data' => new MemberResource($member)
+        ]);
     }
 
+    /**
+     * Dar de baja en ITAM
+     */
+    public function destroy($id)
+    {
+        $member = $this->memberService->retireMember($id);
+
+        return response()->json([
+            'message' => 'Baja de IT registrada. El estado se ha recalculado.',
+            'status' => $member->status // Te devuelve BAJA o TERMINADO según la matemática
+        ]);
+    }
 
     // Nuevo Endpoint para Importar
     /**
@@ -101,8 +110,7 @@ class MemberController extends Controller
      */
     public function stats()
     {
-        $data = $this->memberService->getBiweeklyStats();
-        return response()->json($data);
+        return response()->json($this->memberService->getSimpleStats());
     }
 
 }

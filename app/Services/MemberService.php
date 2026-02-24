@@ -75,48 +75,67 @@ class MemberService
         return $member;
     }
 
-    // public function deleteMember($id)
-    // {
-    //     $member = Member::findOrFail($id);
-    //     $member->delete();
-    // }
+    public function admitMember($id)
+    {
+        $member = Member::findOrFail($id);
+        
+        // Solo admitimos si no tiene ya una fecha de admisión
+        if (is_null($member->admission_date)) {
+            $member->update([
+                'admission_date' => Carbon::now(),
+                // ¡Magia! No pasamos el 'status', el Modelo lo pondrá en ACTIVO automáticamente
+            ]);
+        }
+        
+        return $member;
+    }
 
-    // Nuevo método para dar de baja a un miembro
+    /**
+     * [ACTUALIZADO] PROCESO IT: BAJA DE USUARIO
+     * Solo marcamos la fecha IT. El Modelo decidirá si se queda en 'BAJA' 
+     * o pasa a 'TERMINADO' si RH ya puso su fecha.
+     */
     public function retireMember($id)
     {
         $member = Member::findOrFail($id);
+        
         $member->update([
-            'status' => 'BAJA',
             'termination_date' => Carbon::now(),
+            // No pasamos 'status' => 'BAJA', el modelo lo calcula matemáticamente.
         ]);
 
         return $member;
     }
 
-    // Método para obtener estadísticas quincenales de altas y bajas
-    public function getBiweeklyStats()
+    /**
+     * [ACTUALIZADO] PROCESO RH: FIN DE CONTRATO (Opcional, si el Front de RH lo invoca)
+     */
+    public function setRhTerminationDate($id, $date)
     {
-        $startDate = Carbon::now()->subDays(15);
-        $endDate = Carbon::now();
+        $member = Member::findOrFail($id);
+        $member->update([
+            'hire_end_date' => $date, // Fecha que RH indica que acabó el contrato
+        ]);
+        return $member;
+    }
 
-        // Contamos Altas (basado en hire_date o created_at según tu regla de negocio)
-        $altas = Member::whereBetween('hire_date', [$startDate, $endDate])->count();
-
-        // Contamos Bajas (basado en termination_date)
-        $bajas = Member::where('status', 'BAJA')
-                       ->whereBetween('termination_date', [$startDate, $endDate])
-                       ->count();
-
+   /**
+     * Estadísticas Simples (Dashboard)
+     * Muestra cuántos usuarios hay en cada etapa del ciclo de vida.
+     */
+    public function getSimpleStats()
+    {
         return [
-            'period' => [
-                'start' => $startDate->toDateString(),
-                'end' => $endDate->toDateString()
-            ],
-            'stats' => [
-                'altas' => $altas,
-                'bajas' => $bajas,
-                'difference' => $altas - $bajas // Balance neto
-            ]
+            'total_members' => Member::count(),
+            
+            // Operativos (Ya tienen laptop/accesos)
+            'active'        => Member::where('status', Member::STATUS_ACTIVE)->count(),
+            
+            // Pendientes de IT (RH ya los creó, falta que IT les de activos)
+            'pending_it'    => Member::where('status', Member::STATUS_PENDING_IT)->count(),
+            
+            // En proceso de salida (Falta cerrar cuentas o devolver equipos)
+            'offboarding'   => Member::where('status', Member::STATUS_OFFBOARDING)->count(),
         ];
     }
 

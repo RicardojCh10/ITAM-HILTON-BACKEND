@@ -12,11 +12,14 @@ class Asset extends Model
     //Campos que se pueden asignar masivamente
     protected $fillable = [        
         'property_id',
+        // 'category_id',
         'member_id',
         'provider_id',
         'category',
+        // 'quantity',
         'brand',
         'model',
+        // 'price',
         'serial_number',
         'hilton_name',
         'mac_address',

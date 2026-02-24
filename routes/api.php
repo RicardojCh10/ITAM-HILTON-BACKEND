@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     // Members
     Route::post('members/import', [MemberController::class, 'import']);
+    Route::put('/members/{id}/admit', [MemberController::class, 'admit']);
     Route::get('members/stats', [MemberController::class, 'stats']);
     Route::apiResource('members', MemberController::class);
     

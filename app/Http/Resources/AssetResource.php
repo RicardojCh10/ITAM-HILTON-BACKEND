@@ -36,8 +36,8 @@ class AssetResource extends JsonResource
                 'last_name' => $this->member->last_name,
                 'full_name' => $this->member->full_name,
                 'email' => $this->member->email,
-                'position' => $this->member->position ?? null,
-                'department' => $this->member->department ?? null,
+                'position' => $this->member->position?->name ?? 'Sin Puesto',
+                'department' => $this->member->position?->department?->name ?? 'Sin Departamento',
             ] : null,
             
             // INFO BÁSICA

@@ -25,7 +25,7 @@ class AssetService
     ): LengthAwarePaginator
     {
         // 1. Iniciar Query con Relaciones
-        $query = Asset::with(['property', 'member', 'provider'])->orderBy('id', 'desc');
+        $query = Asset::with(['property', 'member.position.department', 'provider'])->orderBy('id', 'desc');
 
         // 2. Filtros
         if ($propertyId) $query->where('property_id', $propertyId);
