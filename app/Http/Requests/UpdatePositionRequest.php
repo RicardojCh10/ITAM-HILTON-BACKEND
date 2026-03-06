@@ -20,6 +20,9 @@ class UpdatePositionRequest extends FormRequest
             'department_id' => 'sometimes|integer|exists:departments,id',
             'name' => 'sometimes|string|max:100|unique:positions,name',
             'create_at' => 'nullable|date',
+
+            'default_permissions'   => 'nullable|array',
+            'default_permissions.*' => 'integer|exists:platform_permissions,id',
         ];
     }
 }

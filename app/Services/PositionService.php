@@ -44,6 +44,14 @@ class PositionService
         return $position;
     }
 
+    public function syncDefaultPermissions(int $positionId, array $permissionIds)
+    {
+        $position = Position::findOrFail($positionId);
+        $position->defaultPlatformPermissions()->sync($permissionIds);
+        
+        return $position->load('defaultPlatformPermissions');
+    }
+
     public function deletePosition($id)
     {
         $position = Position::findOrFail($id);

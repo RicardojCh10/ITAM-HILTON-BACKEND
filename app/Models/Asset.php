@@ -12,19 +12,18 @@ class Asset extends Model
     //Campos que se pueden asignar masivamente
     protected $fillable = [        
         'property_id',
-        // 'category_id',
         'member_id',
         'provider_id',
-        'category',
-        // 'quantity',
+        'category_id',
+        'batch_id',
         'brand',
         'model',
-        // 'price',
         'serial_number',
         'hilton_name',
         'mac_address',
         'ip_address',
         'status',
+        'price',
         'purchase_date',
         'warranty_expiry',
         'specs',        // JSONB archivo para especificaciones adicionales
@@ -36,6 +35,23 @@ class Asset extends Model
         'purchase_date' => 'date',
         'warranty_expiry' => 'date',
     ];
+
+    //Relaciones con otros modelos
+
+    public function category()
+    {
+        return $this->belongsTo(AssetCategory::class, 'category_id');
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(AssetBatch::class, 'batch_id');
+    }
+
+    public function accessories()
+    {
+        return $this->hasMany(AssetAccessory::class); 
+    }
 
     public function property()
     {

@@ -48,17 +48,29 @@ class MemberResource extends JsonResource
 
                 'onq_id' => $this->onq_id,
             ],
-
-            // 'hire_date' => $this->hire_date ? $this->hire_date->format('Y-m-d') : null,
-            // 'termination_date' => $this->termination_date ? $this->termination_date->format('Y-m-d') : null,
-            // 'admission_date' => $this->admission_date ? $this->admission_date->format('Y-m-d') : null,
-            // 'hire_end_date' => $this->hire_end_date ? $this->hire_end_date->format('Y-m-d') : null,
+         
             'hire_date' => $this->hire_date ? Carbon::parse($this->hire_date)->format('Y-m-d') : null,
             'termination_date' => $this->termination_date ? Carbon::parse($this->termination_date)->format('Y-m-d') : null,
             'admission_date' => $this->admission_date ? Carbon::parse($this->admission_date)->format('Y-m-d') : null,
             'hire_end_date' => $this->hire_end_date ? Carbon::parse($this->hire_end_date)->format('Y-m-d') : null,
             'status' => $this->status,
             'details' => $this->details, // Devuelve el JSON completo
+
+            'platform_permissions' => $this->whenLoaded('platformPermissions', function () {
+                return $this->platformPermissions->map(function ($perm) {
+                    return [
+                        'id' => $perm->id,
+                        'name' => $perm->name,
+                        'platform_id' => $perm->platform_id,
+                        'platform_name' => $perm->platform->name ?? null,
+                        
+                        // Metadatos de Auditoría (Tabla Pivote)
+                        'is_override' => (bool) $perm->pivot->is_override,
+                        'granted_by'  => $perm->pivot->granted_by,
+                    ];
+                });
+            }),
+            
             'created_at' => $this->created_at ? $this->created_at->toIso8601String() : null,
         ];
     }

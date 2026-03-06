@@ -116,4 +116,14 @@ class Member extends Model
     {
         return $this->hasMany(Asset::class);
     }
+
+    /**
+     * Los permisos reales que tiene el miembro (Snapshot)
+     */
+    public function platformPermissions()
+    {
+        return $this->belongsToMany(PlatformPermission::class, 'member_platform_permission')
+                    ->withPivot(['is_override', 'granted_by'])
+                    ->withTimestamps();
+    }
 }

@@ -425,7 +425,7 @@ class OrganizationMigrationSeeder extends Seeder
             }
 
           // Migrar los miembros a las nuevas posiciones
-            $members = Member::whereNotNull('position')->whereNull('position_id')->get();
+            $members = Member::whereNull('position_id')->get();
 
             foreach ($members as $member) {
                 $position = Position::where('name', $member->position)

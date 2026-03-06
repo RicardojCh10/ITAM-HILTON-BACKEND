@@ -60,7 +60,7 @@ class MemberService
 
     public function getMemberById(int $id)
     {
-        return Member::with('property')->findOrFail($id);
+        return Member::with('property, position.department, platformPermissions.platform')->findOrFail($id);
     }
 
     public function updateMember($id, array $data)
@@ -91,9 +91,7 @@ class MemberService
     }
 
     /**
-     * [ACTUALIZADO] PROCESO IT: BAJA DE USUARIO
-     * Solo marcamos la fecha IT. El Modelo decidirá si se queda en 'BAJA' 
-     * o pasa a 'TERMINADO' si RH ya puso su fecha.
+     * PROCESO IT: BAJA DE USUARIO
      */
     public function retireMember($id)
     {
@@ -108,7 +106,7 @@ class MemberService
     }
 
     /**
-     * [ACTUALIZADO] PROCESO RH: FIN DE CONTRATO (Opcional, si el Front de RH lo invoca)
+     *  PROCESO RH: FIN DE CONTRATO (Opcional, si el Front de RH lo invoca)
      */
     public function setRhTerminationDate($id, $date)
     {
@@ -121,7 +119,6 @@ class MemberService
 
    /**
      * Estadísticas Simples (Dashboard)
-     * Muestra cuántos usuarios hay en cada etapa del ciclo de vida.
      */
     public function getSimpleStats()
     {

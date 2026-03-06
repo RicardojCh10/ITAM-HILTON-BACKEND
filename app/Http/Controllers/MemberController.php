@@ -7,6 +7,7 @@ use App\Services\MemberService;
 use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
 use App\Http\Resources\MemberResource;
+use App\Actions\ProvisionMemberAccessAction;
 use Illuminate\Http\Request;
 
 class MemberController extends Controller
@@ -77,6 +78,28 @@ class MemberController extends Controller
         ]);
     }
 
+     /**
+     * Sincronizar Permisos de Plataforma (ITAM) - Acción específica para cuando se actualizan los permisos manualmente desde el Front o se asignan nuevos permisos a la posición.
+     */
+    public function syncPermissions(Request $request, $id, ProvisionMemberAccessAction $action)
+    {
+        // 1. Validar request al vuelo (es un array de IDs)
+        $request->validate([
+            'permissions'   => 'present|array',
+            'permissions.*' => 'integer|exists:platform_permissions,id'
+        ]);
+
+        $member = $this->memberService->getMemberById($id);
+        
+        // 2. Delegamos la lógica matemática compleja a la Acción
+        $updatedMember = $action->execute($member, $request->permissions);
+
+        return response()->json([
+            'message' => 'Accesos a plataformas actualizados y auditados.',
+            'data' => new MemberResource($updatedMember)
+        ]);
+    }
+
     /**
      * Dar de baja en ITAM
      */
@@ -90,7 +113,6 @@ class MemberController extends Controller
         ]);
     }
 
-    // Nuevo Endpoint para Importar
     /**
      * Importar Miembros desde Excel
      */
@@ -104,7 +126,6 @@ class MemberController extends Controller
         return response()->json(['message' => 'Importación completada']);
     }
 
-    // Nuevo Endpoint para Stats
     /** 
      * Obtener estadísticas quincenales de altas y bajas
      */
