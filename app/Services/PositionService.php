@@ -9,7 +9,7 @@ class PositionService
 {
     public function getAllPositions($perPage = 15, $search = null, $departmentId = null): LengthAwarePaginator
     {
-        $query = Position::with('department')->orderBy('name', 'asc');
+        $query = Position::with('department', 'defaultPlatformPermissions')->orderBy('name', 'asc');
 
          if ($departmentId) {
              $query->where('department_id', $departmentId);

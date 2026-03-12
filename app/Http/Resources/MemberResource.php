@@ -23,7 +23,7 @@ class MemberResource extends JsonResource
                 ];
             }),
 
-            'position_details' => $this->position ? [ // Verificamos si existe la relación (no es null)
+            'position_details' => $this->position ? [ 
                 'id' => $this->position->id,
                 'name' => $this->position->name,
                 'department_id' => $this->position->department_id,
@@ -31,6 +31,17 @@ class MemberResource extends JsonResource
                     'id' => $this->position->department->id,
                     'name' => $this->position->department->name,
                 ] : null,
+                
+                // NUEVO: Mandamos el Blueprint (lo que IT debería asignarle)
+                'default_permissions' => $this->position->relationLoaded('defaultPlatformPermissions') 
+                    ? $this->position->defaultPlatformPermissions->map(function ($perm) {
+                        return [
+                            'id' => $perm->id,
+                            'name' => $perm->name,
+                            'platform_id' => $perm->platform_id,
+                        ];
+                    }) 
+                    : [],
             ] : null,
 
             'tm_id' => $this->tm_id,
@@ -67,6 +78,17 @@ class MemberResource extends JsonResource
                         // Metadatos de Auditoría (Tabla Pivote)
                         'is_override' => (bool) $perm->pivot->is_override,
                         'granted_by'  => $perm->pivot->granted_by,
+                    ];
+                });
+            }),
+
+            'assets' => $this->whenLoaded('assets', function () {
+                return $this->assets->map(function ($asset) {
+                    return [
+                        'id' => $asset->id,
+                        'brand' => $asset->brand,
+                        'model' => $asset->model,
+                        'category_name' => $asset->category->name ?? 'Hardware'
                     ];
                 });
             }),

@@ -8,6 +8,7 @@ use App\Http\Requests\StoreMemberRequest;
 use App\Http\Requests\UpdateMemberRequest;
 use App\Http\Resources\MemberResource;
 use App\Actions\ProvisionMemberAccessAction;
+use App\Services\AccessControlPdfService;
 use Illuminate\Http\Request;
 
 class MemberController extends Controller
@@ -124,6 +125,25 @@ class MemberController extends Controller
 
         $this->memberService->importMembers($request->file('file'));
         return response()->json(['message' => 'Importación completada']);
+    }
+
+    /**
+     * Generar PDF de Control de Accesos ITAM
+     */
+    public function downloadAccessPdf($id, AccessControlPdfService $pdfService)
+    {
+        // Traemos al miembro con sus relaciones críticas
+        $member = $this->memberService->getMemberById($id);
+
+        // Generamos el PDF crudo en memoria
+        $pdfOutput = $pdfService->generatePdf($member);
+
+        // Nomenclatura corporativa para el archivo
+        $filename = 'ACCESOS_' . strtoupper(str_replace(' ', '_', $member->tm_id)) . '.pdf';
+
+        return response($pdfOutput, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
 
     /** 

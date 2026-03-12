@@ -61,23 +61,18 @@ class Member extends Model
         $hasItStart = !is_null($this->admission_date);
         $hasItEnd   = !is_null($this->termination_date);
 
-        // 1. CONDICIÓN TERMINADO: Las 4 fechas deben existir
         if ($hasRhStart && $hasRhEnd && $hasItStart && $hasItEnd) {
             return 'TERMINADO';
         }
 
-        // 2. CONDICIÓN BAJA (Offboarding): Falta alguna fecha pero ya inició un proceso de salida
-        // Ya sea que RH lo dio de baja o IT le quitó accesos
         if ($hasRhEnd || $hasItEnd) {
             return 'BAJA';
         }
 
-        // 3. CONDICIÓN ACTIVO: Ya tiene inicio IT y NO tiene fechas de salida
         if ($hasItStart && !$hasItEnd && !$hasRhEnd) {
             return 'ACTIVO';
         }
 
-        // 4. CONDICIÓN PENDIENTE IT: RH lo creó (tiene fecha contrato) pero IT no lo ha admitido
         if ($hasRhStart && !$hasItStart) {
             return 'PENDIENTE_IT';
         }
@@ -117,9 +112,6 @@ class Member extends Model
         return $this->hasMany(Asset::class);
     }
 
-    /**
-     * Los permisos reales que tiene el miembro (Snapshot)
-     */
     public function platformPermissions()
     {
         return $this->belongsToMany(PlatformPermission::class, 'member_platform_permission')

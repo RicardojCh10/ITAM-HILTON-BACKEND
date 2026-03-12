@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdatePositionRequest extends FormRequest
 {
@@ -17,10 +18,14 @@ class UpdatePositionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'department_id' => 'sometimes|integer|exists:departments,id',
-            'name' => 'sometimes|string|max:100|unique:positions,name',
-            'create_at' => 'nullable|date',
-
+            'department_id' => 'required|exists:departments,id',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                // Magia de Laravel: Ignora el ID de este puesto al buscar duplicados
+                Rule::unique('positions')->ignore($this->route('position'))
+            ],
             'default_permissions'   => 'nullable|array',
             'default_permissions.*' => 'integer|exists:platform_permissions,id',
         ];
