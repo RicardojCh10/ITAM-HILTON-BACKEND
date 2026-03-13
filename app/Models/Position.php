@@ -30,4 +30,12 @@ class Position extends Model
     {
         return $this->hasMany(Member::class);
     }
+
+    /**
+     * El estándar de permisos que dicta este puesto (Blueprint)
+     */
+    public function defaultPlatformPermissions()
+    {
+        return $this->belongsToMany(PlatformPermission::class, 'position_platform_permission');
+    }
 }

@@ -38,6 +38,10 @@ class PositionController extends Controller
     public function store(StorePositionRequest $request)
     {
         $position = $this->positionService->createPosition($request->validated());
+        
+        if ($request->has('default_permissions')) {
+            $this->positionService->syncDefaultPermissions($position->id, $request->default_permissions);
+        }
         return new PositionResource($position);
     }
 
@@ -47,7 +51,7 @@ class PositionController extends Controller
     public function show($id)
     {
         $position = $this->positionService->getPositionById($id);
-        return new PositionResource($position);
+        return new PositionResource($position->load('defaultPlatformPermissions.platform'));
     }
 
     /**
@@ -56,7 +60,13 @@ class PositionController extends Controller
     public function update(UpdatePositionRequest $request, $id)
     {
         $position = $this->positionService->updatePosition($id, $request->validated());
-        return new PositionResource($position);
+        
+        // NUEVO: Sincronizamos al actualizar
+        if ($request->has('default_permissions')) {
+            $this->positionService->syncDefaultPermissions($position->id, $request->default_permissions);
+        }
+
+        return new PositionResource($position->load('defaultPlatformPermissions.platform'));
     }
 
     /**

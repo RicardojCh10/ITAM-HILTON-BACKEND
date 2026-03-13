@@ -56,23 +56,23 @@ class AssetController extends Controller
     /**
      * Descargar Acta de Asignación de Activo (PDF)
      */
-    public function downloadAssignment($id)
-    {
-       $asset = \App\Models\Asset::with(['member', 'property'])->findOrFail($id);
+    // public function downloadAssignment($id)
+    // {
+    //    $asset = \App\Models\Asset::with(['member', 'property'])->findOrFail($id);
 
-       if (!$asset->member_id) {
-           return response()->json(['message' => 'Este activo no está asignado a nadie.'], 400);
-       }
+    //    if (!$asset->member_id) {
+    //        return response()->json(['message' => 'Este activo no está asignado a nadie.'], 400);
+    //    }
 
-       $pdfContent = $this->assignmentPdfService->generatePdf($asset);
+    //    $pdfContent = $this->assignmentPdfService->generatePdf($asset);
 
-       $filename = 'Acta_' . preg_replace('/[^A-Za-z0-9\-]/', '', $asset->serial_number) . '.pdf';
+    //    $filename = 'Acta_' . preg_replace('/[^A-Za-z0-9\-]/', '', $asset->serial_number) . '.pdf';
 
-       return response($pdfContent, 200, [
-           'Content-Type' => 'application/pdf',
-           'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-       ]);
-    }
+    //    return response($pdfContent, 200, [
+    //        'Content-Type' => 'application/pdf',
+    //        'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+    //    ]);
+    // }
 
     // Crear un nuevo Activo
       /**

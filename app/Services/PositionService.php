@@ -9,7 +9,7 @@ class PositionService
 {
     public function getAllPositions($perPage = 15, $search = null, $departmentId = null): LengthAwarePaginator
     {
-        $query = Position::with('department')->orderBy('name', 'asc');
+        $query = Position::with('department', 'defaultPlatformPermissions')->orderBy('name', 'asc');
 
          if ($departmentId) {
              $query->where('department_id', $departmentId);
@@ -42,6 +42,14 @@ class PositionService
         $position = Position::findOrFail($id);
         $position->update($data);
         return $position;
+    }
+
+    public function syncDefaultPermissions(int $positionId, array $permissionIds)
+    {
+        $position = Position::findOrFail($positionId);
+        $position->defaultPlatformPermissions()->sync($permissionIds);
+        
+        return $position->load('defaultPlatformPermissions');
     }
 
     public function deletePosition($id)

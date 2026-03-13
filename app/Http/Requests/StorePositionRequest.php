@@ -20,6 +20,9 @@ class StorePositionRequest extends FormRequest
             'department_id' => 'required|exists:departments,id',
             'name' => 'required|string|max:100|unique:positions,name',
             'create_at' => 'nullable|date',
+
+            'default_permissions'   => 'nullable|array',
+            'default_permissions.*' => 'integer|exists:platform_permissions,id',
         ];
     }
 }
