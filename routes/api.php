@@ -29,8 +29,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('auth/me', [AuthController::class, 'me']);
 
     // --- RECURSOS API ---
-    Route::get('/dashboard/stats', [DashboardController::class, 'getStats']);
-
+    Route::get('/dashboard/master-metrics', [DashboardController::class, 'getMasterMetrics']);
 
     // Users
     Route::apiResource('users', UserController::class);
