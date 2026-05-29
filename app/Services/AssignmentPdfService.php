@@ -23,7 +23,7 @@ class AssignmentPdfService extends FPDF
         $mPos   = $this->member->position_name ?? 'No especificado';
         $mDep   = $this->member->department_name ?? 'No especificado';
 
-        // LÓGICA DE INICIALES 
+        // LÓGICA DE INICIALES
         $initials = '';
         if (!empty($mName)) {
             $parts = explode(' ', trim($mName));
@@ -43,25 +43,58 @@ class AssignmentPdfService extends FPDF
         $this->SetAutoPageBreak(true, 10);
         $this->SetLineWidth(0.2);
 
-        // LOGO
-        $logoPath = public_path('img/hilton_logo.png');
-        if (file_exists($logoPath)) {
-            $this->Image($logoPath, 12, 10, 25);
+        // ==========================================
+        // LOGOS
+        // ==========================================
+        $logoWidth = 25;
+
+        // 1. LOGO IZQUIERDO
+        $logoPathLeft = public_path('img/CUNQR_Logo.png');
+        if (file_exists($logoPathLeft)) {
+            $this->Image($logoPathLeft, 10, 10, $logoWidth);
         } else {
-            $this->SetXY(12, 10);
+            $this->SetXY(10, 10);
             $this->SetFont('Arial', 'I', 8);
-            $this->Cell(25, 10, '[Logo]', 1, 0, 'C');
+            $this->Cell($logoWidth, 10, '[Logo Izq]', 1, 0, 'C');
         }
 
-        // CABECERA
-        $this->SetFont('Arial', 'B', 16);
+        // 2. LOGO DERECHO
+        $logoPathRight = public_path('img/CUNWA_Logo.png');
+
+        $pageWidth = $this->GetPageWidth();
+        $rightX = $pageWidth - 10 - $logoWidth;
+
+        if (file_exists($logoPathRight)) {
+            $this->Image($logoPathRight, $rightX, 10, $logoWidth);
+        } else {
+            $this->SetXY($rightX, 10);
+            $this->SetFont('Arial', 'I', 8);
+            $this->Cell($logoWidth, 10, '[Logo Der]', 1, 0, 'C');
+        }
+
+        $logoWidth = 25;
+        $pageWidth = $this->GetPageWidth();
+
+        $startX = 10 + $logoWidth + 2;
+
+        $middleWidth = $pageWidth - ($startX * 2);
+
         $this->SetY(12);
-        $this->Cell(0, 8, 'HILTON', 0, 1, 'C');
+
         $this->SetFont('Arial', 'B', 11);
-        $this->Cell(0, 5, $this->safeDecode('CARTA ENTREGA Y CONTROL DE ACTIVOS'), 0, 1, 'C');
+        $this->SetX($startX);
+        $this->MultiCell($middleWidth, 5, "HILTON CANCUN, AN ALL-INCLUSIVE RESORT \n& WALDORF ASTORIA RIVIERA MAYA", 0, 'C');
+
+        // 3. Subtítulos
+        $this->SetFont('Arial', 'B', 9);
+        $this->SetX($startX);
+        $this->Cell($middleWidth, 5, $this->safeDecode('CARTA ENTREGA Y CONTROL DE ACTIVOS'), 0, 1, 'C');
+
         $this->SetFont('Arial', '', 9);
-        $this->Cell(0, 5, $this->safeDecode('CUNQR - Departamento de Sistemas'), 0, 1, 'C');
-        $this->Ln(4);
+        $this->SetX($startX);
+        $this->Cell($middleWidth, 5, $this->safeDecode('Departamento de Tecnologías de Información'), 0, 1, 'C');
+
+        $this->Ln(2);
 
         // A. TIPO DE ENTREGA
         $this->sectionTitle('A. TIPO DE ENTREGA');
@@ -140,7 +173,7 @@ class AssignmentPdfService extends FPDF
                         ['label' => 'Plan Celular:', 'value' => $specs['plan'] ?? 'N/A', 'width' => 75],
                     ]);
 
-                    
+
                     $this->fieldRow([
                         ['label' => 'Descripción:', 'value' => $specs['description'] ?? 'N/A', 'width' => 195]
                     ]);
@@ -172,7 +205,6 @@ class AssignmentPdfService extends FPDF
             }
         }
 
-
         // ==========================================
         // 4. ACUERDO DE RESPONSABILIDAD
         // ==========================================
@@ -180,12 +212,17 @@ class AssignmentPdfService extends FPDF
 
         $this->SetFillColor(204, 221, 238);
         $this->SetFont('Arial', '', 7);
-        $legalText = "Declaro recibir el/los equipo(s) antes descritos en las condiciones señaladas, los cuales la empresa (Hospitality Services Maya SA de CV) me otorga en condición de préstamo y como herramienta de trabajo, para cumplir con mis funciones operativas dentro de la compañía. Entiendo que el uso del equipo es para fines laborales exclusivamente, así mismo confirmo que son de mi conocimiento las políticas del correcto uso y consumo del plan celular, el cual ha sido asignado por un periodo de 24 meses. En caso de ocurrir algún daño o pérdida del equipo y/o accesorios, notificaré de inmediato al departamento de sistemas, a través de un correo electrónico, y este será revisado internamente.\n\n"
-            . "Si se determina que el daño ocasionado es por un acto de negligencia, seré responsable del pago conforme a lo estipulado en la LFT en su ART 110* verificado por el equipo de Finanzas, considerando la devaluación que por uso aplique. El pago de dicha responsabilidad se realizará a través de nómina o en el finiquito correspondiente.\n\n"
-            . "El equipo deberá ser devuelto a la compañía en las mismas condiciones que se entregó, solo con el desgaste natural por uso, para poder recibir el siguiente equipo durante el nuevo periodo de asignación, se considera daño físico grave pantalla rota, estrellada y golpes en la carcaza.\n\n"
-            . "*Art 110- El pago de deudas contraídas con el patrón por anticipo de salarios, pagos hechos con exceso al trabajador, errores, pérdidas, averías o adquisición de artículos producidos por la empresa o establecimiento. La cantidad exigible en ningún caso podrá ser mayor del importe de los salarios de un mes y el descuento será al que convengan el trabajador y el patrón, sin que pueda ser mayor del treinta por ciento del excedente del salario mínimo.";
 
-        $this->MultiCell(0, 3.5, $this->safeDecode($legalText), 1, 'J', false);
+        $legalText = "En caso de daño, pérdida o avería del equipo y/o accesorios asignados, EL TRABAJADOR se obliga a notificar de inmediato al departamento correspondiente, a efecto de que la empresa lleve a cabo la investigación interna para determinar las circunstancias de tiempo, modo y lugar, así como la posible responsabilidad.\n\n"
+            . "En caso de que se determine, mediante dicho procedimiento, que el daño es imputable al TRABAJADOR por negligencia, uso indebido o dolo, éste acepta y autoriza expresamente que el monto correspondiente pueda ser recuperado por la empresa mediante descuentos a su salario, en términos de lo dispuesto por el artículo 110, fracción I, de la Ley Federal del Trabajo.\n\n"
+            . "Para tales efectos, las partes acuerdan que:\n"
+            . "a) El monto total del adeudo no podrá exceder del importe equivalente a un mes de salario del TRABAJADOR.\n"
+            . "b) Los descuentos que en su caso se realicen no podrán exceder del treinta por ciento del excedente del salario mínimo vigente.\n"
+            . "c) Todo descuento deberá contar con la aceptación expresa y por escrito del TRABAJADOR.\n"
+            . "d) En caso de terminación de la relación laboral, el saldo pendiente podrá ser descontado del finiquito o liquidación correspondiente, en los términos permitidos por la legislación laboral aplicable.\n\n"
+            . "Lo anterior sin perjuicio del derecho del TRABAJADOR de manifestar lo que a su interés convenga dentro del procedimiento interno correspondiente.";
+
+        $this->MultiCell(0, 3, $this->safeDecode($legalText), 1, 'J', false);
 
         $this->SetFont('Arial', 'B', 8);
         $this->Ln(2);
